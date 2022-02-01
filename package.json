@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "sync": "node sync-git.js"
   },
   "dependencies": {
     "@alessiocancian/react-native-actionsheet": "^3.1.1",
@@ -53,6 +54,7 @@
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-test-renderer": "17.0.2",
+    "shelljs": "^0.8.5",
     "typescript": "^4.4.4"
   },
   "resolutions": {
