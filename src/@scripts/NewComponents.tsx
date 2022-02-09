@@ -1,6 +1,6 @@
 import React, { PureComponent, ReactNode } from "react";
 import { View, Image, StyleSheet } from "react-native";
-import { Chip, Divider, List, Text, TouchableRipple } from "react-native-paper";
+import { Button, Chip, Divider, IconButton, List, Text, TouchableRipple } from "react-native-paper";
 import { favorite, newMangas, popular } from "../@types/ApiManga";
 import { chapterInfo } from "../@types/ViewInfo";
 import { StyleDark, StylesDefaults } from "../Styles";
@@ -21,6 +21,11 @@ const styles = StyleSheet.create({
         flexGrow: 0
     },
     itemList3: {
+        margin: 0,
+        height: 65,
+        flexGrow: 0
+    },
+    itemList5: {
         margin: 0,
         height: 65,
         flexGrow: 0
@@ -46,16 +51,16 @@ class ItemList1 extends PureComponent<IProps0, {}> {
     }
 }
 
-type IProps1 = { data: chapterInfo, title: string, action: (url: string, chapter: string)=>any };
+type IProps1 = { data: chapterInfo, title: string, action: (url: string, title: string, chapter: string)=>any };
 class ItemList3 extends PureComponent<IProps1> {
     constructor(props: IProps1) { super(props); }
     static contextType = PreferencesContext;
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<View style={styles.container}>
-            <TouchableRipple onPress={()=>{ this.props.action(this.props.data.url, `Capitulo ${this.props.data.chapter} - ${this.props.title}`); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+            <TouchableRipple onPress={()=>{ this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.title}`, this.props.data.chapter); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
                 <List.Item
-                    title={this.props.data.chapter}
+                    title={`Capítulo ${this.props.data.chapter}`}
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
                     style={styles.itemList3}
                     right={()=><View style={{ height: 50, width: 50, justifyContent: 'center', alignItems: 'center' }}>{(this.props.data.view) && <Chip style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}</View>}
@@ -67,17 +72,17 @@ class ItemList3 extends PureComponent<IProps1> {
     }
 }
 
-type IProps2 = { data: newMangas, action: (url: string, chapter: string)=>any };
+type IProps2 = { data: newMangas, action: (url: string, title: string, chapter: string)=>any };
 class ItemList2 extends PureComponent<IProps2> {
     constructor(props: IProps2) { super(props); }
     static contextType = PreferencesContext;
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<View style={styles.container}>
-            <TouchableRipple onPress={()=>this.props.action(this.props.data.url, `Capitulo ${this.props.data.chapter} - ${this.props.data.title}`)} style={{ justifyContent: 'center' }} rippleColor={StylesDefaults.rippleColor}>
+            <TouchableRipple onPress={()=>this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.data.title}`, this.props.data.chapter)} style={{ justifyContent: 'center' }} rippleColor={StylesDefaults.rippleColor}>
                 <List.Item
                     title={this.props.data.title}
-                    description={()=><Text style={{ marginLeft: 4, opacity: 0.65 }}>Capitulo {this.props.data.chapter}</Text>}
+                    description={()=><Text style={{ marginLeft: 4, opacity: 0.65 }}>Capítulo {this.props.data.chapter}</Text>}
                     style={styles.itemList2}
                     left={()=><Image source={(isThemeDark)? require('../Assets/Icon1-Dark.png'): require('../Assets/Icon1.png')} style={{ width: 70, height: 70, borderRadius: 4 }} /> }
                 />
@@ -105,10 +110,32 @@ class ItemList4 extends PureComponent<IProps3> {
     }
 }
 
+type IProps4 = { data: { index: number, title: string, chapter: string, length: number }, title: string, action: (index: number, title: string)=>any, moreMenu: (index: number)=>any };
+class ItemList5 extends PureComponent<IProps4> {
+    constructor(props: IProps4) { super(props); }
+    static contextType = PreferencesContext;
+    render(): React.ReactNode {
+        const { isThemeDark } = this.context;
+        return(<View style={styles.container}>
+            <TouchableRipple onLongPress={()=>this.props.moreMenu(this.props.data.index)} onPress={()=>this.props.action(this.props.data.index, `Capítulo ${this.props.data.chapter} - ${this.props.title}`)} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+                <List.Item
+                    title={`Capítulo ${this.props.data.chapter}`}
+                    description={`${this.props.data.length} paginas`}
+                    titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
+                    style={styles.itemList5}
+                    left={()=><Image source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
+                    right={()=><IconButton icon={'dots-vertical'} />}
+                />
+            </TouchableRipple>
+            <Divider theme={{ dark: isThemeDark }}/>
+        </View>);
+    }
+}
 
 export {
     ItemList1,
     ItemList2,
     ItemList3,
-    ItemList4
+    ItemList4,
+    ItemList5
 };

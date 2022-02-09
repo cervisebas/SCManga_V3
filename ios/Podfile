@@ -16,6 +16,8 @@ target 'SCManga2' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-html-to-pdf', :path => '../node_modules/react-native-html-to-pdf'
+
   target 'SCManga2Tests' do
     inherit! :complete
     # Pods for testing

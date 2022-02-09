@@ -3,21 +3,13 @@ import { Dimensions, StyleSheet, View, TouchableOpacity, SafeAreaView, FlatList,
 import { Appbar } from 'react-native-paper';
 import { PreferencesContext } from '../@scripts/PreferencesContext';
 import { StyleDark, StylesDefaults } from '../Styles';
-import { FullWidthImage } from './FullWidthImage2';
-import { Download } from '../@scripts/Download';
+import { FullWidthImage } from './FullWidthImageLocal';
 
 const { width, height } = Dimensions.get('window');
-const download = new Download();
 
 interface IProps {
     visible: boolean;
     title: string;
-    information: {
-        title: string;
-        idName: string;
-        chapter: string;
-        cover: string;
-    };
     close: ()=>any;
     images: string[];
     openImage: (image: string)=>any;
@@ -26,7 +18,7 @@ interface IState {
     _isMount: boolean;
 };
 
-export class ViewMangas extends Component<IProps, IState> {
+export class ViewMangasLocal extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -47,13 +39,16 @@ export class ViewMangas extends Component<IProps, IState> {
                 <Appbar.Header style={{ backgroundColor: (isThemeDark)? StyleDark.headerColor: StylesDefaults.headerColor }}>
                     <Appbar.BackAction onPress={()=>this.props.close()} />
                     <Appbar.Content title={this.props.title} titleStyle={{ color: StylesDefaults.headerText }}/>
-                    <Appbar.Action icon="download" onPress={()=>download.goDownload(this.props.information.title, this.props.information.idName, this.props.information.chapter, this.props.information.cover, this.props.images)} />
                 </Appbar.Header>
                 <SafeAreaView style={{ ...styles.content, position: 'relative' }}>
                     <FlatList
                         data={this.props.images}
                         extraData={(this.props.visible)? false: true}
-                        renderItem={({item, index})=><TouchableOpacity key={index} onPress={()=>this.props.openImage(item)}><View style={styles.imageContent}><FullWidthImage source={{ uri: item }} /></View></TouchableOpacity>}
+                        renderItem={({item, index})=><TouchableOpacity key={index} onPress={()=>this.props.openImage(item)}>
+                            <View style={styles.imageContent}>
+                                <FullWidthImage source={{ uri: item }} />
+                            </View>
+                        </TouchableOpacity>}
                     />
                 </SafeAreaView>
             </View>}

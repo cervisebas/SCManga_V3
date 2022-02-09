@@ -12,7 +12,7 @@ const apiManga = new ApiManga();
 const { width, height } = Dimensions.get('window');
 
 type IProps = {
-    goToChapter: (url: string, title: string)=>any;
+    goToChapter: (url: string, title: string, chapter: string)=>any;
     goInfoManga: (url: string)=>any;
 };
 
@@ -68,7 +68,7 @@ export function Tab1(props: IProps) {
                         data={mangas}
                         extraData={isLoading}
                         horizontal={false}
-                        renderItem={({item, index})=><ItemList2 data={item} key={index} action={(url, title)=>props.goToChapter(url, title)} />}
+                        renderItem={({item, index})=><ItemList2 data={item} key={index} action={(url, title, chapter)=>props.goToChapter(url, title, chapter)} />}
                     />)}
                 </SafeAreaView>
             </View>

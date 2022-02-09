@@ -21,11 +21,14 @@ import { ApiManga } from './@scripts/ApiAnime';
 import { chapterInfo } from './@types/ViewInfo';
 import { ViewsList } from './@scripts/ViewsList';
 import { PreferencesContext } from './@scripts/PreferencesContext';
+import { Download } from './@scripts/Download';
 
 import RNFS from 'react-native-fs';
+import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
 
 const apiManga = new ApiManga();
 const viewsList = new ViewsList();
+const download = new Download();
 
 const HomeScreen = (props: any)=>{
   const [index, setIndex] = React.useState(0);
@@ -47,11 +50,16 @@ const HomeScreen = (props: any)=>{
   };
   const [vMangaSources, setVMangaSources] = useState(['']);
   const [vMangaView, setVMangaView] = useState(false);
+  const [vMangaViewLocal, setVMangaViewlocal] = useState(false);
   const [vMangaTitle, setVMangaTitle] = useState('');
+  const [vMangaChapter, setVMangaChapter] = useState('');
   const vMangaClose = ()=>{
     setVMangaSources(['']);
     setVMangaView(false);
+    setVMangaViewlocal(false);
+    setVMangaChapter('');
     setVMangaTitle('');
+    setVMangaChapter('');
   };
   const [vImageSrc, setVImageSrc] = useState('');
   const [vImageView, setVImageView] = useState(false);
@@ -61,9 +69,11 @@ const HomeScreen = (props: any)=>{
   };
   const [vImagesMangaSources, setVImagesMangaSources] = useState('');
   const [vImagesMangaView, setVImagesMangaView] = useState(false);
+  const [vImagesMangaViewLocal, setVImagesMangaViewLocal] = useState(false);
   const vImagesMangaClose = ()=>{
     setVImagesMangaSources('');
     setVImagesMangaView(false);
+    setVImagesMangaViewLocal(false);
   };
   const [loadingView, setLoadingView] = useState(false);
   const [loadingText, setLoadingText] = useState('');
@@ -91,19 +101,31 @@ const HomeScreen = (props: any)=>{
     setErrorCode(-1);
     setErrorData('');
   };
-  const goToChapter = (url: string, title: string, resolve: ()=>any)=>{
+  const goToChapter = (url: string, title: string, chapter: string, resolve: ()=>any)=>{
     setLoadingView(true);
     setLoadingText('Obteniendo información...');
     apiManga.getImagesChapter(url).then((images)=>{
       setLoadingView(false);
       setVMangaSources(images);
       setVMangaTitle(title);
+      setVMangaChapter(chapter);
       setVMangaView(true);
       viewsList.addItem(url).then(()=>resolve());
     }).catch(()=>{
       setLoadingView(false);
       showAlertError(1, JSON.stringify({ 'url': url, 'title': title }));
     });
+  };
+  const goToChapterLocal = async(index: number, title: string, resolve: ()=>any)=>{
+    setLoadingView(true);
+    setLoadingText('Obteniendo información...');
+    var data = await download.getJsonExist();
+    var mangaData = data[index];
+    setVMangaSources(mangaData.images_files);
+    setVMangaTitle(title);
+    setLoadingView(false);
+    setVMangaViewlocal(true);
+    resolve();
   };
   const goInfoManga = (url: string, resolve: ()=>any)=>{
     setLoadingView(true);
@@ -152,6 +174,10 @@ const HomeScreen = (props: any)=>{
   const goOpenImageViewer2 = (urlImage: string)=>{
     setVImagesMangaSources(urlImage);
     setVImagesMangaView(true);
+  };
+  const goOpenImageViewerLocal = (urlImage: string)=>{
+    setVImagesMangaSources(urlImage);
+    setVImagesMangaViewLocal(true);
   };
   const goVGenderList = (gender: string, title: string)=>{
     setLoadingView(true);
@@ -203,7 +229,7 @@ const HomeScreen = (props: any)=>{
     switch (route.key) {
       case 'recents':
         return(<Tab1
-          goToChapter={(url: string, title: string)=>goToChapter(url, title, ()=>undefined)}
+          goToChapter={(url: string, title: string, chapter: string)=>goToChapter(url, title, chapter, ()=>undefined)}
           goInfoManga={(url: string)=>goInfoManga(url, ()=>{return;})}
         />);
       case 'favorites':
@@ -218,7 +244,10 @@ const HomeScreen = (props: any)=>{
           stateTab3ViewGenderList={(state: boolean)=>stateTab3ViewGenderList(state)}
         />;
       case 'settings':
-        return <Tab4 />;
+        return <Tab4
+          actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
+          goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
+        />;
     }
   };
 
@@ -233,13 +262,16 @@ const HomeScreen = (props: any)=>{
         infoClose={()=>infoClose()}
         vMangaSources={vMangaSources}
         vMangaView={vMangaView}
+        vMangaViewLocal={vMangaViewLocal}
         vMangaTitle={vMangaTitle}
+        vMangaChapter={vMangaChapter}
         vMangaClose={()=>vMangaClose()}
         vImageSrc={vImageSrc}
         vImageView={vImageView}
         vImageClose={()=>vImageClose()}
         vImagesMangaSources={vImagesMangaSources}
         vImagesMangaView={vImagesMangaView}
+        vImagesMangaViewLocal={vImagesMangaViewLocal}
         vImagesMangaClose={()=>vImagesMangaClose()}
         loadingView={loadingView}
         loadingText={loadingText}
@@ -254,9 +286,11 @@ const HomeScreen = (props: any)=>{
         errorCode={errorCode}
         errorData={errorData}
         alertClose={()=>alertClose()}
-        goToChapter={(url: string, title: string, resolve: ()=>any)=>goToChapter(url, title, ()=>resolve())}
+        goToChapter={(url: string, title: string, chapter: string, resolve: ()=>any)=>goToChapter(url, title, chapter, ()=>resolve())}
+        goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
         goOpenImageViewer={(urlImage: string)=>goOpenImageViewer(urlImage)}
         goOpenImageViewer2={(urlImage: string)=>goOpenImageViewer2(urlImage)}
+        goOpenImageViewerLocal={(urlImage: string)=>goOpenImageViewerLocal(urlImage)}
         goInfoManga={(url: string, resolve: ()=>any)=>goInfoManga(url, ()=>resolve())}
         refreshInfoManga={()=>refreshInfoManga()}
         stateTab3ViewGenderList={(state: boolean)=>stateTab3ViewGenderList(state)}

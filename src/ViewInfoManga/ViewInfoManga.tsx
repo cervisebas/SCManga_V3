@@ -16,7 +16,7 @@ interface IProps {
     data: Info;
     visible: boolean;
     clickViewImage: (src: string)=>any;
-    clickGoToChapter: (url: string, title: string)=>any;
+    clickGoToChapter: (url: string, title: string, chapter: string)=>any;
     goVGenderList: (gender: string, title: string)=>any;
     flipChapters: ()=>any;
     isFlipList: boolean;
@@ -79,7 +79,7 @@ export function ViewInfoManga3(props: IProps) {
                         data={item}
                         key={index.toString()}
                         title={props.data.title}
-                        action={(url: string, chapter: string)=>props.clickGoToChapter(url, chapter)}
+                        action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)}
                     />);
                 }}
             />

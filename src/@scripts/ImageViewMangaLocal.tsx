@@ -12,7 +12,7 @@ interface IProps {
 };
 interface IState {};
 
-export class ImageViewManga2 extends Component<IProps, IState> {
+export class ImageViewMangaLocal extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
     }
@@ -22,7 +22,7 @@ export class ImageViewManga2 extends Component<IProps, IState> {
     render(): React.ReactNode {
         return(<Modal visible={this.props.visible} style={styles.modal} onDismiss={()=>this.props.dissmiss()}>
             <ImageViewer
-                imageUrls={[{ url: this.props.image }]}
+                imageUrls={[{ url: `file://${this.props.image}` }]}
                 enableImageZoom={true}
                 saveToLocalByLongPress={false}
                 enableSwipeDown={true}

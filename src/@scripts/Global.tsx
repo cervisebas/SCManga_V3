@@ -5,6 +5,7 @@ import { Info } from "../@types/ViewInfo";
 import { ViewInfoManga3 } from '../ViewInfoManga/ViewInfoManga';
 import { ImageView3 } from './ImageView';
 import { ImageViewManga2 } from './ImageViewManga';
+import { ImageViewMangaLocal } from './ImageViewMangaLocal';
 import { ViewMangas } from '../ViewInfoManga/ViewMangas';
 import { themeDefault } from "../Styles";
 import { ViewGenders } from '../ViewGenders/ViewGenders';
@@ -13,6 +14,7 @@ import { ViewGenders18 } from "../ViewGenders/ViewGenders+18";
 import { MaterialDialog } from 'react-native-material-dialog';
 import { Text, ToastAndroid } from "react-native";
 import { material } from "react-native-typography";
+import { ViewMangasLocal } from "../ViewInfoManga/ViewMangasLocal";
 
 
 interface IProps {
@@ -25,7 +27,9 @@ interface IProps {
     /* View Manga */
     vMangaSources: string[];
     vMangaView: boolean;
+    vMangaViewLocal: boolean;
     vMangaTitle: string;
+    vMangaChapter: string;
     vMangaClose: ()=>any;
 
     /* View Image */
@@ -36,6 +40,7 @@ interface IProps {
     /* View Images Manga */
     vImagesMangaSources: string;
     vImagesMangaView: boolean;
+    vImagesMangaViewLocal: boolean;
     vImagesMangaClose: ()=>any;
 
     /* Loading View */
@@ -58,9 +63,11 @@ interface IProps {
     alertClose: ()=>any;
 
     /* Functions */
-    goToChapter: (url: string, title: string, resolve: ()=>any)=>any;
+    goToChapter: (url: string, title: string, chapter: string, resolve: ()=>any)=>any;
+    goToChapterLocal: (index: number, title: string, resolve: ()=>any)=>any;
     goOpenImageViewer: (urlImage: string)=>any;
     goOpenImageViewer2: (urlImage: string)=>any;
+    goOpenImageViewerLocal: (urlImage: string)=>any;
     goInfoManga: (url: string, resolve: ()=>any)=>any;
     refreshInfoManga: ()=>any;
     stateTab3ViewGenderList: (state: boolean)=>any;
@@ -75,7 +82,7 @@ export function Global2(props: IProps) {
         switch (props.errorCode) {
             case 1:
                 var data = JSON.parse(props.errorData);
-                props.goToChapter(data.url, data.title, ()=>{return;});
+                props.goToChapter(data.url, data.title, data.chapter, ()=>{return;});
                 break;
             case 2:
                 props.goInfoManga(props.errorData, ()=>{return;});
@@ -117,7 +124,7 @@ export function Global2(props: IProps) {
                 data={props.infoData}
                 clickViewImage={(src: string)=>props.goOpenImageViewer(src)}
                 close={()=>props.infoClose()}
-                clickGoToChapter={(url: string, title: string)=>props.goToChapter(url, title, ()=>props.refreshInfoManga())}
+                clickGoToChapter={(url: string, title: string, chapter: string)=>props.goToChapter(url, title, chapter, ()=>props.refreshInfoManga())}
                 goVGenderList={(gender: string, title: string)=>props.goVGenderList(gender, title)}
                 flipChapters={()=>props.flipChapters()}
                 isFlipList={props.infoFlipListChapter}
@@ -126,7 +133,20 @@ export function Global2(props: IProps) {
                 images={props.vMangaSources}
                 visible={props.vMangaView}
                 title={props.vMangaTitle}
+                information={{
+                    title: props.infoData.title,
+                    cover: props.infoData.image,
+                    idName: props.infoData.url.replace('https://leermanga.net/manga/', ''),
+                    chapter: props.vMangaChapter
+                }}
                 openImage={(img: string)=>props.goOpenImageViewer2(img)}
+                close={()=>props.vMangaClose()}
+            />
+            <ViewMangasLocal
+                images={props.vMangaSources}
+                visible={props.vMangaViewLocal}
+                title={props.vMangaTitle}
+                openImage={(img: string)=>props.goOpenImageViewerLocal(img)}
                 close={()=>props.vMangaClose()}
             />
             <ImageView3
@@ -137,6 +157,11 @@ export function Global2(props: IProps) {
             <ImageViewManga2
                 image={props.vImagesMangaSources}
                 visible={props.vImagesMangaView}
+                dissmiss={()=>props.vImagesMangaClose()}
+            />
+            <ImageViewMangaLocal
+                image={props.vImagesMangaSources}
+                visible={props.vImagesMangaViewLocal}
                 dissmiss={()=>props.vImagesMangaClose()}
             />
             <ViewGenders

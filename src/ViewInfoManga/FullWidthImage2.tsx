@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Dimensions, Image, LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { ActivityIndicator } from 'react-native-paper';
 import { PreferencesContext } from "../@scripts/PreferencesContext";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { StyleDark, StylesDefaults } from '../Styles';

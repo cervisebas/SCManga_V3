@@ -62,7 +62,7 @@ export class ApiManga {
                             var temp1: string = `Capítulo ${String($(el).find('a').text()).replace(/\ /gi, '').replace(/\Capítulo/, '').replace(/\n/gi, '')}`;
                             var viewInfo: any = value;
                             chapters.push({
-                                chapter: temp1.slice(0, temp1.indexOf(':')),
+                                chapter: temp1.slice(0, temp1.indexOf(':')).replace('Capítulo ', ''),
                                 url: String($(el).find('a').attr('href')),
                                 view: (value)? true : false,
                                 viewInfo: (value)? viewInfo : { url: '', date: '', views: 0 }
