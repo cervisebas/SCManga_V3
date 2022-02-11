@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Portal } from "react-native-paper";
 import LoadingController from '../@assets/loading/loading-controller';
 import { Info } from "../@types/ViewInfo";
@@ -7,15 +7,14 @@ import { ImageView3 } from './ImageView';
 import { ImageViewManga2 } from './ImageViewManga';
 import { ImageViewMangaLocal } from './ImageViewMangaLocal';
 import { ViewMangas } from '../ViewInfoManga/ViewMangas';
-import { themeDefault } from "../Styles";
+import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
 import { ViewGenders } from '../ViewGenders/ViewGenders';
 import { popular } from "../@types/ApiManga";
 import { ViewGenders18 } from "../ViewGenders/ViewGenders+18";
-import { MaterialDialog } from 'react-native-material-dialog';
+import { MaterialDialog } from "react-native-material-dialog";
 import { Text, ToastAndroid } from "react-native";
-import { material } from "react-native-typography";
 import { ViewMangasLocal } from "../ViewInfoManga/ViewMangasLocal";
-
+import { PreferencesContext } from './PreferencesContext';
 
 interface IProps {
     /* Information */
@@ -77,6 +76,7 @@ interface IProps {
 };
 
 export function Global2(props: IProps) {
+    const { isThemeDark } = useContext(PreferencesContext);
     const retryProcess = ()=>{
         console.log(`\n ${props.errorData}`);
         switch (props.errorCode) {
@@ -102,13 +102,15 @@ export function Global2(props: IProps) {
             <MaterialDialog
                 visible={props.alertView}
                 title={"Oh no :("}
-                colorAccent={"#f4511e"}
+                colorAccent={CombinedDarkTheme.colors.accent}
                 cancelLabel="Cerrar"
                 onCancel={()=>props.alertClose()}
                 okLabel="Reintentar"
+                backgroundColor={(isThemeDark)? CombinedDarkTheme.colors.onSurface: CombinedDefaultTheme.colors.onSurface}
+                titleColor={(isThemeDark)? CombinedDarkTheme.colors.text: CombinedDefaultTheme.colors.text}
                 onOk={()=>{props.alertClose();retryProcess();}}
             >
-                <Text style={[material.subheading, { color: "#B0ABA0" }]}>
+                <Text style={{ color: (isThemeDark)? StyleDark.subtitleColor: StylesDefaults.subtitleColor }}>
                     Ocurrió un error inesperado durante la carga de la información.{'\n\n'}
                     Pulsa en “Cerrar” para ignorar esta alerta o “Reintentar” para volver a intentar la operación.
                 </Text>

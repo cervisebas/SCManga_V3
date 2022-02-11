@@ -254,7 +254,6 @@ const HomeScreen = (props: any)=>{
   const { isThemeDark } = React.useContext(PreferencesContext);
   return(
     <View style={{ flex: 1 }}>
-      <StatusBar backgroundColor={(isThemeDark)? '#212121': '#C33509'} barStyle={'light-content'} />
       <Global2
         infoView={infoView}
         infoData={infoData}
@@ -338,6 +337,7 @@ const App = ()=>{
 
   return(<PreferencesContext.Provider value={preferences}>
     <PaperProvider theme={theme}>
+      <StatusBar backgroundColor={(isThemeDark)? '#212121': '#C33509'} barStyle={'light-content'} />
       <NavigationContainer theme={theme}>
         <Stack.Navigator initialRouteName='scmanga' screenOptions={{ headerShown: false, animation: 'slide_from_bottom' }}>
           <Stack.Screen name='scmanga' component={HomeScreen} />

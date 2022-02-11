@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { newMangas, popular, resolveRecents, favorite, genderList } from '../@types/ApiManga';
 import { gender, Info, chapterInfo } from '../@types/ViewInfo';
 import { ViewsList } from './ViewsList';
