@@ -1,5 +1,6 @@
 import RNFS, { mkdir, ExternalDirectoryPath, downloadFile, exists, writeFile, readFile, unlink } from 'react-native-fs';
 import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
+import DeviceInfo from "react-native-device-info";
 
 type JSON_File = {
     title: string;
@@ -9,6 +10,9 @@ type JSON_File = {
     images_files: string[];
 };
 
+var notifs: number = 0;
+var showGroup: boolean = false;
+
 export class Download {
     constructor() {
         setTimeout(async()=>{
@@ -17,12 +21,22 @@ export class Download {
                 name: 'Descargas',
                 badge: false
             });
+            this.showMoreInfo = (await DeviceInfo.getApiLevel() < 26)? false: true;
         });
+        setInterval(()=>{
+            if (notifs > 1) {
+                if (!showGroup) this.createGroup(true);
+            } else if (showGroup) {
+                this.createGroup(false);
+            }
+        }, 512);
     }
     private channel1: string = '';
+    private showMoreInfo: boolean = true;
 
     async goDownload(title: string, idName: string, chapter: string, cover: string, images: string[]) {
         var idDl: string = String(Math.floor(Math.random() * (999 - 1)) + 1);
+        notifs += 1;
         await this.notification(idDl, `Descargando: ${title}`, `Capítulo ${chapter}`, 0, images.length, true, true);
         try {
             await mkdir(`${ExternalDirectoryPath}/${idName}-${chapter}`);
@@ -37,6 +51,7 @@ export class Download {
             await this.notificationWithOutProgress(idDl, `Descarga finalizada: ${title}`, `Capitulo ${chapter}`, false);
         } catch (error) {
             await this.notificationWithOutProgress(idDl, `Ocurrio un error al descargar: ${title}`, `Capitulo ${chapter}`, false);
+            notifs -= 1;
             console.log(error);
         }
     }
@@ -59,6 +74,36 @@ export class Download {
             }
         });
     }
+    async createGroup(show: boolean) {
+        if (show) {
+            showGroup = true;
+            return (this.showMoreInfo)? await notifee.displayNotification({
+                id: '1001',
+                title: 'Descargas en progreso',
+                subtitle: `${notifs} descargas`,
+                android: {
+                  channelId: this.channel1,
+                  groupSummary: true,
+                  groupId: '1000',
+                  groupAlertBehavior: AndroidGroupAlertBehavior.SUMMARY,
+                  onlyAlertOnce: true
+                }
+            }) : await notifee.displayNotification({
+                id: '1001',
+                title: 'Descargas en progreso',
+                android: {
+                  channelId: this.channel1,
+                  groupSummary: true,
+                  groupId: '1000',
+                  groupAlertBehavior: AndroidGroupAlertBehavior.SUMMARY,
+                  onlyAlertOnce: true
+                }
+            });
+        } else {
+            showGroup = false;
+            return await notifee.cancelNotification('1001');
+        }
+    }
     async setJsonFile(jsonString: JSON_File) {
         var jsonExist = await this.getJsonExist();
         jsonExist.push(jsonString);
@@ -67,25 +112,36 @@ export class Download {
     }
 
     async notification(id: string, title: string, body: string, progress: number, maxProgress: number, indeterminate: boolean, ongoing: boolean) {
-        return await notifee.displayNotification({
+        return (this.showMoreInfo)? await notifee.displayNotification({
             id: id,
             title: title,
             subtitle: `${Math.floor((progress/maxProgress)*100)}%`,
             body: body,
             android: {
                 channelId: this.channel1,
-                groupId: 'scmanga',
+                groupId: '1000',
                 groupAlertBehavior: AndroidGroupAlertBehavior.SUMMARY,
                 smallIcon: 'scmanga_icon',
                 color: '#F4511E',
                 onlyAlertOnce: true,
                 ongoing: ongoing,
                 autoCancel: false,
-                progress: {
-                    max: maxProgress,
-                    current: progress,
-                    indeterminate: indeterminate
-                }
+                progress: { max: maxProgress, current: progress, indeterminate: indeterminate },
+            }
+        }) : await notifee.displayNotification({
+            id: id,
+            title: title,
+            body: `${body} - ${Math.floor((progress/maxProgress)*100)}%`,
+            android: {
+                channelId: this.channel1,
+                groupId: '1000',
+                groupAlertBehavior: AndroidGroupAlertBehavior.SUMMARY,
+                smallIcon: 'scmanga_icon',
+                color: '#F4511E',
+                onlyAlertOnce: true,
+                ongoing: ongoing,
+                autoCancel: false,
+                progress: { max: maxProgress, current: progress, indeterminate: indeterminate }
             }
         });
     }
@@ -96,8 +152,6 @@ export class Download {
             body: body,
             android: {
                 channelId: this.channel1,
-                groupId: 'scmanga',
-                groupAlertBehavior: AndroidGroupAlertBehavior.SUMMARY,
                 smallIcon: 'scmanga_icon',
                 color: '#F4511E',
                 onlyAlertOnce: false,

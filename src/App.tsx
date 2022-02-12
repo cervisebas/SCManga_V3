@@ -1,4 +1,4 @@
-import { StatusBar, View } from 'react-native';
+import { Dimensions, StatusBar, View } from 'react-native';
 
 import { BottomNavigation } from 'react-native-paper';
 
@@ -24,7 +24,8 @@ import { PreferencesContext } from './@scripts/PreferencesContext';
 import { Download } from './@scripts/Download';
 
 import RNFS from 'react-native-fs';
-import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
+import DeviceInfo from "react-native-device-info";
+import { getNavigationBarHeight } from "react-native-android-navbar-height";
 
 const apiManga = new ApiManga();
 const viewsList = new ViewsList();
@@ -32,6 +33,8 @@ const download = new Download();
 
 const HomeScreen = (props: any)=>{
   const [index, setIndex] = React.useState(0);
+  const [marginTop, setMarginTop] = React.useState(0);
+  const [marginBottom, setMarginBottom] = React.useState(0);
   const [routes] = React.useState([
     { key: 'recents', title: 'Recientes', icon: 'history' },
     { key: 'favorites', title: 'Favoritos', icon: 'heart' },
@@ -224,7 +227,12 @@ const HomeScreen = (props: any)=>{
   };
   /* ##### Final Global ##### */
 
-
+  setTimeout(async() => {
+    if (await DeviceInfo.getApiLevel() < 26) {
+      setMarginTop(StatusBar.currentHeight || 24);
+      setMarginBottom(await getNavigationBarHeight());
+    }
+  });
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case 'recents':
@@ -253,7 +261,7 @@ const HomeScreen = (props: any)=>{
 
   const { isThemeDark } = React.useContext(PreferencesContext);
   return(
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginBottom: marginBottom, marginTop: marginTop }}>
       <Global2
         infoView={infoView}
         infoData={infoData}
@@ -312,7 +320,7 @@ const checkNoMedia = async()=>{
 };
 
 const App = ()=>{
-  setTimeout(() => SplashScreen.hide(), 1500);
+  setTimeout(()=>SplashScreen.hide(), 1500);
   const Stack = createNativeStackNavigator();
   const [isThemeDark, setIsThemeDark] = React.useState(false);
   var theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;

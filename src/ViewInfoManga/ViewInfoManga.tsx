@@ -7,9 +7,12 @@ import { Info } from "../@types/ViewInfo";
 import { ApiManga } from "../@scripts/ApiAnime";
 import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
 import { PreferencesContext } from "../@scripts/PreferencesContext";
+import { getNavigationBarHeight } from "react-native-android-navbar-height";
 
 const apiManga = new ApiManga();
 const { width, height } = Dimensions.get('window');
+
+const getForPercent = (px: number, perc: number)=>Math.fround((perc*px)/100);
 
 interface IProps {
     close: ()=>any;
@@ -28,9 +31,11 @@ export function ViewInfoManga3(props: IProps) {
     const [index, setIndex] = useState(0);
     const [colorFavorite, setColorFavorite] = useState('#FFFFFF');
     const [favorite, setFavorite] = useState(false);
+    const [navBarHeight, setNavBarHeight] = useState(0);
     const { isThemeDark } = React.useContext(PreferencesContext);
     const flatListChapters = useRef<FlatList | null>(null);
 
+    setTimeout(async()=>setNavBarHeight(await getNavigationBarHeight()));
 
     /* ##### Rendes & Actions & Elements ##### */
     const renderTabBar = (props: any)=>{
@@ -85,7 +90,14 @@ export function ViewInfoManga3(props: IProps) {
             />
             <FAB
                 icon={(props.isFlipList)? 'arrow-down-bold': 'arrow-up-thick'}
-                style={{ ...styles.fab, backgroundColor: (isThemeDark)? StyleDark.secondHeaderColor: StylesDefaults.secondHeaderColor }}
+                style={{
+                    position: 'absolute',
+                    right: 16,
+                    //bottom: (56),
+                    bottom: (navBarHeight !== 0)? (56 - (navBarHeight / 2) + 8): 56,
+                    margin: 0,
+                    backgroundColor: (isThemeDark)? StyleDark.secondHeaderColor: StylesDefaults.secondHeaderColor
+                }}
                 color={'#FFFFFF'}
                 loading={isLoading}
                 onPress={()=>{
@@ -164,22 +176,28 @@ export function ViewInfoManga3(props: IProps) {
 const styles = StyleSheet.create({
     content: {
         width: width,
-        height: (height - 352),
+        //height: (height - 352),
+        height: (getForPercent(height, 60) - 32),
         backgroundColor: '#FFFFFF'
     },
     image: {
         width: width,
-        height: 320,
+        //height: 320,
+        height: getForPercent(height, 40),
         backgroundColor: '#000000'
     },
     imageComponent: {
         width: width,
-        height: 384,
+        //height: 384,
+        height: (getForPercent(height, 40) + 64),
         resizeMode: 'cover'
     },
     fab: {
         position: 'absolute',
+        width: 56,
+        height: 56,
         right: 16,
-        bottom: 42
+        bottom: (56),
+        margin: 0
     }
 });
