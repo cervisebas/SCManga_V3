@@ -20,7 +20,7 @@ export class ImageViewMangaLocal extends Component<IProps, IState> {
         return(<Button icon="close" mode="text" color={'#f4511e'} onPress={()=>this.props.dissmiss()} style={styles.button}>Cerrar</Button>);
     }
     render(): React.ReactNode {
-        return(<Modal visible={this.props.visible} style={styles.modal} onDismiss={()=>this.props.dissmiss()}>
+        return(<Modal visible={this.props.visible} style={styles.modal} onDismiss={()=>this.props.dissmiss()} onRequestClose={()=>this.props.dissmiss()}>
             <ImageViewer
                 imageUrls={[{ url: `file://${this.props.image}` }]}
                 enableImageZoom={true}

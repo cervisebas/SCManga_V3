@@ -79,14 +79,9 @@ export function ViewInfoManga3(props: IProps) {
                 data={props.data.chapters}
                 style={{ marginBottom: 32 }}
                 ref={flatListChapters}
-                renderItem={({item, index})=>{
-                    return(<ItemList3
-                        data={item}
-                        key={index.toString()}
-                        title={props.data.title}
-                        action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)}
-                    />);
-                }}
+                keyExtractor={(_item, index)=>index.toString()}
+                getItemLayout={(_data, index)=>({ length: 65, offset: 65 * index, index })}
+                renderItem={({item, index})=><ItemList3 data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
             />
             <FAB
                 icon={(props.isFlipList)? 'arrow-down-bold': 'arrow-up-thick'}
@@ -154,7 +149,7 @@ export function ViewInfoManga3(props: IProps) {
                 <Appbar.Action icon="heart" color={colorFavorite} onPress={()=>actionButtonFavorite()}/>
             </Appbar.Header>
             <View style={styles.image}>
-                <TouchableRipple onPress={()=>{return; /*props.clickViewImage(props.data.image)*/}} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+                <TouchableRipple onPress={()=>props.clickViewImage(props.data.image)}>
                     <Image source={{ uri: ((props.data.image !== "")? props.data.image : undefined) }} style={styles.imageComponent}/>
                 </TouchableRipple>
             </View>
@@ -177,19 +172,19 @@ const styles = StyleSheet.create({
     content: {
         width: width,
         //height: (height - 352),
-        height: (getForPercent(height, 60) - 32),
+        height: (getForPercent(height, 65) - 32),
         backgroundColor: '#FFFFFF'
     },
     image: {
         width: width,
         //height: 320,
-        height: getForPercent(height, 40),
+        height: getForPercent(height, 35),
         backgroundColor: '#000000'
     },
     imageComponent: {
         width: width,
         //height: 384,
-        height: (getForPercent(height, 40) + 64),
+        height: (getForPercent(height, 35) + 64),
         resizeMode: 'cover'
     },
     fab: {

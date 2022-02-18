@@ -124,7 +124,7 @@ export function Global2(props: IProps) {
             <ViewInfoManga3
                 visible={props.infoView}
                 data={props.infoData}
-                clickViewImage={(src: string)=>props.goOpenImageViewer(src)}
+                clickViewImage={(src: string)=>props.goOpenImageViewer2(src)}
                 close={()=>props.infoClose()}
                 clickGoToChapter={(url: string, title: string, chapter: string)=>props.goToChapter(url, title, chapter, ()=>props.refreshInfoManga())}
                 goVGenderList={(gender: string, title: string)=>props.goVGenderList(gender, title)}

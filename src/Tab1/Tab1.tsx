@@ -54,6 +54,12 @@ export function Tab1(props: IProps) {
                         data={popular}
                         extraData={isLoading}
                         horizontal={false}
+                        keyExtractor={(_item, index)=>index.toString()}
+                        getItemLayout={(_data, index) => ({
+                            length: 165,
+                            offset: 165 * index,
+                            index
+                        })}
                         renderItem={({item, index})=><ItemList1 data={item} key={index} action={(url)=>props.goInfoManga(url)} />}
                     /> )}
                 </SafeAreaView>
@@ -68,6 +74,12 @@ export function Tab1(props: IProps) {
                         data={mangas}
                         extraData={isLoading}
                         horizontal={false}
+                        keyExtractor={(_item, index)=>index.toString()}
+                        getItemLayout={(_data, index) => ({
+                            length: 85,
+                            offset: 85 * index,
+                            index
+                        })}
                         renderItem={({item, index})=><ItemList2 data={item} key={index} action={(url, title, chapter)=>props.goToChapter(url, title, chapter)} />}
                     />)}
                 </SafeAreaView>

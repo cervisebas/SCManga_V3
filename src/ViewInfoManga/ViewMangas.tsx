@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Dimensions, StyleSheet, View, TouchableOpacity, SafeAreaView, FlatList, Modal } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { PreferencesContext } from '../@scripts/PreferencesContext';
@@ -52,14 +52,33 @@ export class ViewMangas extends Component<IProps, IState> {
                 <SafeAreaView style={{ ...styles.content, position: 'relative' }}>
                     <FlatList
                         data={this.props.images}
-                        extraData={(this.props.visible)? false: true}
-                        renderItem={({item, index})=><TouchableOpacity key={index} onPress={()=>this.props.openImage(item)}><View style={styles.imageContent}><FullWidthImage source={{ uri: item }} /></View></TouchableOpacity>}
+                        keyExtractor={(_item, index)=>index.toString()}
+                        //renderItem={({item, index})=><TouchableOpacity key={index} onPress={()=>this.props.openImage(item)}><View style={styles.imageContent}><FullWidthImage source={{ uri: item }} /></View></TouchableOpacity>}
+                        renderItem={({item, index})=><ImageView key={index} image={item} openImage={()=>this.props.openImage(item)} />}
                     />
                 </SafeAreaView>
             </View>}
         </Modal>);
     }
-}
+};
+
+type IPropsI = { image: string; openImage: ()=>any; };
+type IStateI = { _isMount: boolean; };
+class ImageView extends PureComponent<IPropsI, IStateI> {
+    constructor(props: IPropsI) { super(props); this.state = { _isMount: false }; }
+    componentWillUnmount() { this.setState({ _isMount: false }); }
+    componentDidMount() { this.setState({ _isMount: true }); }
+    render(): React.ReactNode {
+        return(<View style={{ flex: 2 }}>
+            {(this.state._isMount) && <TouchableOpacity onPress={()=>this.props.openImage()}>
+                <View style={styles.imageContent}>
+                    <FullWidthImage source={{ uri: this.props.image }} />
+                </View>
+            </TouchableOpacity>}
+        </View>);
+    }
+};
+
 const styles = StyleSheet.create({
     content: {
         height: (height - 32),

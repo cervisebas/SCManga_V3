@@ -5,6 +5,7 @@ import { favorite, newMangas, popular } from "../@types/ApiManga";
 import { chapterInfo } from "../@types/ViewInfo";
 import { StyleDark, StylesDefaults } from "../Styles";
 import { PreferencesContext } from "./PreferencesContext";
+import FastImage from 'react-native-fast-image';
 
 const styles = StyleSheet.create({
     container: {
@@ -43,7 +44,7 @@ class ItemList1 extends PureComponent<IProps0, {}> {
                     title={this.props.data.title}
                     description={()=><Text style={{ marginLeft: 8, opacity: 0.65 }}>{this.props.data.type}</Text>}
                     style={styles.itemList1}
-                    left={()=><Image source={{ uri: this.props.data.image }} style={{ width: 110, height: 150, borderRadius: 4 }} /> }
+                    left={()=><FastImage source={{ uri: this.props.data.image }} style={{ width: 110, height: 150, borderRadius: 4 }} /> }
                 />
             </TouchableRipple>
             <Divider />
@@ -52,21 +53,23 @@ class ItemList1 extends PureComponent<IProps0, {}> {
 }
 
 type IProps1 = { data: chapterInfo, title: string, action: (url: string, title: string, chapter: string)=>any };
-class ItemList3 extends PureComponent<IProps1> {
-    constructor(props: IProps1) { super(props); }
+class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
+    constructor(props: IProps1) { super(props); this.state = { _isMount: false }; }
     static contextType = PreferencesContext;
+    componentDidMount() { this.setState({ _isMount: true }); }
+    componentWillUnmount() { this.setState({ _isMount: false }); }
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<View style={styles.container}>
-            <TouchableRipple onPress={()=>{ this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.title}`, this.props.data.chapter); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+            {(this.state._isMount) && <TouchableRipple onPress={()=>{ this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.title}`, this.props.data.chapter); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
                 <List.Item
                     title={`Capítulo ${this.props.data.chapter}`}
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
                     style={styles.itemList3}
                     right={()=><View style={{ height: 50, width: 50, justifyContent: 'center', alignItems: 'center' }}>{(this.props.data.view) && <Chip style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}</View>}
-                    left={()=><Image source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
+                    left={()=><FastImage source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
                 />
-            </TouchableRipple>
+            </TouchableRipple>}
             <Divider theme={{ dark: isThemeDark }}/>
         </View>);
     }
@@ -84,7 +87,7 @@ class ItemList2 extends PureComponent<IProps2> {
                     title={this.props.data.title}
                     description={()=><Text style={{ marginLeft: 4, opacity: 0.65 }}>Capítulo {this.props.data.chapter}</Text>}
                     style={styles.itemList2}
-                    left={()=><Image source={(isThemeDark)? require('../Assets/Icon1-Dark.png'): require('../Assets/Icon1.png')} style={{ width: 70, height: 70, borderRadius: 4 }} /> }
+                    left={()=><FastImage source={(isThemeDark)? require('../Assets/Icon1-Dark.png'): require('../Assets/Icon1.png')} style={{ width: 70, height: 70, borderRadius: 4 }} /> }
                 />
             </TouchableRipple>
             <Divider />
@@ -102,7 +105,7 @@ class ItemList4 extends PureComponent<IProps3> {
                     title={this.props.data.title}
                     description={()=><Text style={{ marginLeft: 8, opacity: 0.65 }}>{this.props.data.type}{"\n"}{"\n"}{`Añadido: ${this.props.data.date}`}</Text>}
                     style={styles.itemList1}
-                    left={()=><Image source={{ uri: this.props.data.image }} style={{ width: 110, height: 150, borderRadius: 4 }} /> }
+                    left={()=><FastImage source={{ uri: this.props.data.image }} style={{ width: 110, height: 150, borderRadius: 4 }} /> }
                 />
             </TouchableRipple>
             <Divider />
@@ -123,7 +126,7 @@ class ItemList5 extends PureComponent<IProps4> {
                     description={`${this.props.data.length} paginas`}
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
                     style={styles.itemList5}
-                    left={()=><Image source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
+                    left={()=><FastImage source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
                     right={()=><IconButton icon={'dots-vertical'} />}
                 />
             </TouchableRipple>
