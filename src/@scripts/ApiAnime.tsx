@@ -41,7 +41,6 @@ export class ApiManga {
     }
     getInformation(url: string): Promise<Info> {
         return new Promise((resolve, reject)=>{
-            return reject();
             fetch(url).then((response)=>response.text()).then((html)=>{
                 try {
                     const $ = cheerio.load(html);

@@ -75,22 +75,24 @@ export class FullWidthImage extends PureComponent<IProps, IState> {
 
     render() {
         const { isThemeDark } = this.context;
-        return ((this._isMount) && <View onLayout={this._onLayout.bind(this)} style={{ minHeight: 120 }}>
-            <FastImage
-                source={{
-                    uri: this.props.source.uri,
-                    priority: FastImage.priority.normal
-                }}
-                style={{
-                    ...this.props.style,
-                    width: this.state.width,
-                    height: this.state.height
-                }}
-                onLoadStart={()=>this.setState({ isLoad: true })}
-                onLoadEnd={()=>setTimeout(()=>this.setState({ isLoad: false }), 512)}
-                resizeMode={FastImage.resizeMode.stretch}
-            />
-            {(this.state.isLoad)? <this.Loading isDark={isThemeDark} /> : null}
+        return (<View onLayout={this._onLayout.bind(this)} style={{ minHeight: 120 }}>
+            {(this._isMount) && <View>
+                <FastImage
+                    source={{
+                        uri: this.props.source.uri,
+                        priority: FastImage.priority.normal
+                    }}
+                    style={{
+                        ...this.props.style,
+                        width: this.state.width,
+                        height: this.state.height
+                    }}
+                    onLoadStart={()=>this.setState({ isLoad: true })}
+                    onLoadEnd={()=>setTimeout(()=>this.setState({ isLoad: false }), 512)}
+                    resizeMode={FastImage.resizeMode.stretch}
+                />
+                {(this.state.isLoad)? <this.Loading isDark={isThemeDark} /> : null}
+            </View>}
         </View>);
     }
 }

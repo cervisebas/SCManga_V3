@@ -6,6 +6,7 @@ import { StylesDefaults, StyleDark, CombinedDarkTheme, CombinedDefaultTheme } fr
 import { PreferencesContext } from '../@scripts/PreferencesContext';
 import { Downloads } from "../downloads/downloads";
 import SplashScreen from "react-native-splash-screen";
+import { InfoApp } from "../info-app/InfoApp";
 
 type IProps = {
     goToChapterLocal: (index: number, title: string, resolve: ()=>any)=>any;
@@ -14,13 +15,15 @@ type IProps = {
 type IState = {
     isSwitchOn: boolean;
     viewDownload: boolean;
+    viewInfo: boolean;
 };
 export class Tab4 extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
             isSwitchOn: false,
-            viewDownload: false
+            viewDownload: false,
+            viewInfo: false
         };
     }
     static contextType = PreferencesContext;
@@ -72,13 +75,14 @@ export class Tab4 extends Component<IProps, IState> {
                     left={(props)=><List.Icon {...props} icon={'download'}/>}
                 />
             </TouchableRipple>
-            <TouchableRipple onPress={()=>console.log('Hola')} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+            <TouchableRipple onPress={()=>this.setState({ viewInfo: true })} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
                 <List.Item
                     title='Información'
                     left={(props)=><List.Icon {...props} icon={'information'}/>}
                 />
             </TouchableRipple>
             <Downloads actionLoading={(visible: boolean, text?: string)=>this.props.actionLoading(visible, text)} visible={this.state.viewDownload} goToChapterLocal={(index, title, resolve)=>this.props.goToChapterLocal(index, title, ()=>resolve())} close={()=>this.setState({ viewDownload: false })} />
+            <InfoApp visible={this.state.viewInfo} close={()=>this.setState({ viewInfo: false })} />
         </View>);
     }
 }

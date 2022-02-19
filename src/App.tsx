@@ -24,6 +24,7 @@ import { PreferencesContext } from './@scripts/PreferencesContext';
 import { Download } from './@scripts/Download';
 
 import RNFS from 'react-native-fs';
+import { LogBox } from 'react-native';
 import DeviceInfo from "react-native-device-info";
 import { getNavigationBarHeight } from "react-native-android-navbar-height";
 
@@ -327,6 +328,8 @@ const App = ()=>{
   const toggleTheme = React.useCallback(()=>setIsThemeDark(!isThemeDark), [isThemeDark]);
   const preferences = React.useMemo(()=>({ toggleTheme, isThemeDark}), [toggleTheme, isThemeDark]);
   SystemNavigationBar.setNavigationColor((isThemeDark)? '#212121': '#C33509', true);
+  LogBox.ignoreLogs(['new NativeEventEmitter']);
+  LogBox.ignoreAllLogs();
   checkNoMedia();
 
   //console.log(RNFS.ExternalDirectoryPath);
