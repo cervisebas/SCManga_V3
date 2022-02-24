@@ -1,14 +1,8 @@
 import { StatusBar, View } from 'react-native';
 
-import { BottomNavigation } from 'react-native-paper';
+import { BottomNavigation, Provider as PaperProvider } from 'react-native-paper';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import SystemNavigationBar from "react-native-system-navigation-bar";
-import SplashScreen from 'react-native-splash-screen';
 import React, { useState } from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { Tab1 } from './Tab1/Tab1';
 import { Tab2 } from './Tab2/Tab2';
@@ -16,24 +10,22 @@ import { Tab3 } from './Tab3/Tab3-2';
 import { Tab4 } from './Tab4/Tab4';
 
 import { Global2 } from './@scripts/Global';
-import { CombinedDarkTheme, CombinedDefaultTheme } from './Styles';
 import { ApiManga } from './@scripts/ApiAnime';
 import { chapterInfo } from './@types/ViewInfo';
 import { ViewsList } from './@scripts/ViewsList';
-import { PreferencesContext } from './@scripts/PreferencesContext';
 import { Download } from './@scripts/Download';
 
-import RNFS from 'react-native-fs';
-import { LogBox } from 'react-native';
 import DeviceInfo from "react-native-device-info";
 import { getNavigationBarHeight } from "react-native-android-navbar-height";
-import { HomeScreenHentai } from '../src2/App';
+import { CombinedDefaultTheme } from './Styles';
+import SplashScreen from 'react-native-splash-screen';
 
 const apiManga = new ApiManga();
 const viewsList = new ViewsList();
 const download = new Download();
 
-const HomeScreen = ({ navigation }: any)=>{
+const HomeScreenHentai = ({ navigation }: any)=>{
+  React.useEffect(()=>navigation.addListener('beforeRemove', (e: any)=>(e.data.action.type == 'GO_BACK')&&e.preventDefault()),[navigation]);
   const [index, setIndex] = React.useState(0);
   const [marginTop, setMarginTop] = React.useState(0);
   const [marginBottom, setMarginBottom] = React.useState(0);
@@ -89,14 +81,12 @@ const HomeScreen = ({ navigation }: any)=>{
   const [loadingView, setLoadingView] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [vGenderView, setVGenderView] = useState(false);
-  const [vGenderView18, setVGenderView18] = useState(false);
   const [vGenderPages, setVGenderPages] = useState(0);
   const [vGenderGender, setVGenderGender] = useState('');
   const [vGenderTitle, setVGenderTitle] = useState('');
   const [vGenderList, setVGenderList] = useState([{ title: '', image: '', url: '', type: '' }]);
   const vGenderClose = ()=>{
     setVGenderView(false);
-    setVGenderView18(false);
     setVGenderPages(0);
     setVGenderGender('');
     setVGenderTitle('');
@@ -193,20 +183,7 @@ const HomeScreen = ({ navigation }: any)=>{
   const goVGenderList = (gender: string, title: string)=>{
     setLoadingView(true);
     setLoadingText('Obteniendo información...');
-    if (vGenderView18 || vGenderView) vGenderClose();
-    if (gender == 'adulto-+18') {
-      return apiManga.getGender18().then((data)=>{
-        setLoadingView(false);
-        setVGenderList(data.list);
-        setVGenderPages(data.pages);
-        setVGenderGender(gender);
-        setVGenderTitle(title);
-        setVGenderView18(true);
-      }).catch(()=>{
-        setLoadingView(false);
-        showAlertError(3, JSON.stringify({ gender: gender, title: title }));
-      });
-    }
+    if (vGenderView) vGenderClose();
     apiManga.getGender(gender).then((data)=>{
       setLoadingView(false);
       setVGenderList(data.list);
@@ -261,108 +238,64 @@ const HomeScreen = ({ navigation }: any)=>{
         />;
       case 'settings':
         return <Tab4
+          pageGo={(page)=>navGo(page)}
           actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
           goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
-          pageGo={(page)=>navGo(page)}
         />;
     }
   };
 
-  return(<View style={{ flex: 1, marginBottom: marginBottom, marginTop: marginTop }}>
-    <Global2
-      infoView={infoView}
-      infoData={infoData}
-      infoFlipListChapter={infoListChaptersFlip}
-      infoClose={()=>infoClose()}
-      vMangaSources={vMangaSources}
-      vMangaView={vMangaView}
-      vMangaViewLocal={vMangaViewLocal}
-      vMangaTitle={vMangaTitle}
-      vMangaChapter={vMangaChapter}
-      vMangaClose={()=>vMangaClose()}
-      vImageSrc={vImageSrc}
-      vImageView={vImageView}
-      vImageClose={()=>vImageClose()}
-      vImagesMangaSources={vImagesMangaSources}
-      vImagesMangaView={vImagesMangaView}
-      vImagesMangaViewLocal={vImagesMangaViewLocal}
-      vImagesMangaClose={()=>vImagesMangaClose()}
-      loadingView={loadingView}
-      loadingText={loadingText}
-      vGenderView={vGenderView}
-      vGenderView18={vGenderView18}
-      vGenderGender={vGenderGender}
-      vGenderTitle={vGenderTitle}
-      vGenderList={vGenderList}
-      vGenderPages={vGenderPages}
-      vGenderClose={()=>vGenderClose()}
-      alertView={alertView}
-      errorCode={errorCode}
-      errorData={errorData}
-      alertClose={()=>alertClose()}
-      goToChapter={(url: string, title: string, chapter: string, resolve: ()=>any)=>goToChapter(url, title, chapter, ()=>resolve())}
-      goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
-      goOpenImageViewer={(urlImage: string)=>goOpenImageViewer(urlImage)}
-      goOpenImageViewer2={(urlImage: string)=>goOpenImageViewer2(urlImage)}
-      goOpenImageViewerLocal={(urlImage: string)=>goOpenImageViewerLocal(urlImage)}
-      goInfoManga={(url: string, resolve: ()=>any)=>goInfoManga(url, ()=>resolve())}
-      refreshInfoManga={()=>refreshInfoManga()}
-      stateTab3ViewGenderList={(state: boolean)=>stateTab3ViewGenderList(state)}
-      actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
-      goVGenderList={(gender: string, title: string)=>goVGenderList(gender, title)}
-      flipChapters={()=>flipChapters()}
-    />
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-    />
-  </View>);
+  return(<PaperProvider theme={CombinedDefaultTheme}>
+    <View style={{ flex: 1, marginBottom: marginBottom, marginTop: marginTop }}>
+      <Global2
+        infoView={infoView}
+        infoData={infoData}
+        infoFlipListChapter={infoListChaptersFlip}
+        infoClose={()=>infoClose()}
+        vMangaSources={vMangaSources}
+        vMangaView={vMangaView}
+        vMangaViewLocal={vMangaViewLocal}
+        vMangaTitle={vMangaTitle}
+        vMangaChapter={vMangaChapter}
+        vMangaClose={()=>vMangaClose()}
+        vImageSrc={vImageSrc}
+        vImageView={vImageView}
+        vImageClose={()=>vImageClose()}
+        vImagesMangaSources={vImagesMangaSources}
+        vImagesMangaView={vImagesMangaView}
+        vImagesMangaViewLocal={vImagesMangaViewLocal}
+        vImagesMangaClose={()=>vImagesMangaClose()}
+        loadingView={loadingView}
+        loadingText={loadingText}
+        vGenderView={vGenderView}
+        vGenderGender={vGenderGender}
+        vGenderTitle={vGenderTitle}
+        vGenderList={vGenderList}
+        vGenderPages={vGenderPages}
+        vGenderClose={()=>vGenderClose()}
+        alertView={alertView}
+        errorCode={errorCode}
+        errorData={errorData}
+        alertClose={()=>alertClose()}
+        goToChapter={(url: string, title: string, chapter: string, resolve: ()=>any)=>goToChapter(url, title, chapter, ()=>resolve())}
+        goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
+        goOpenImageViewer={(urlImage: string)=>goOpenImageViewer(urlImage)}
+        goOpenImageViewer2={(urlImage: string)=>goOpenImageViewer2(urlImage)}
+        goOpenImageViewerLocal={(urlImage: string)=>goOpenImageViewerLocal(urlImage)}
+        goInfoManga={(url: string, resolve: ()=>any)=>goInfoManga(url, ()=>resolve())}
+        refreshInfoManga={()=>refreshInfoManga()}
+        stateTab3ViewGenderList={(state: boolean)=>stateTab3ViewGenderList(state)}
+        actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
+        goVGenderList={(gender: string, title: string)=>goVGenderList(gender, title)}
+        flipChapters={()=>flipChapters()}
+      />
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
+    </View>
+  </PaperProvider>);
 };
 
-const checkNoMedia = async()=>{
-  var exist = await RNFS.exists(`${RNFS.ExternalDirectoryPath}/.nomedia`);
-  if (!exist) await RNFS.writeFile(`${RNFS.ExternalDirectoryPath}/.nomedia`, '');
-};
-
-const App = ()=>{
-  setTimeout(()=>SplashScreen.hide(), 1500);
-  const Stack = createNativeStackNavigator();
-  const [isThemeDark, setIsThemeDark] = React.useState(false);
-  const [page, setPage] = React.useState(0);
-  var theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
-  const toggleTheme = React.useCallback(()=>setIsThemeDark(!isThemeDark), [isThemeDark]);
-  const preferences = React.useMemo(()=>({ toggleTheme, isThemeDark}), [toggleTheme, isThemeDark]);
-  SystemNavigationBar.setNavigationColor((page == 0)? (isThemeDark)? '#212121': '#C33509' : '#a3015f', true);
-  LogBox.ignoreLogs(['new NativeEventEmitter']);
-  LogBox.ignoreAllLogs();
-  checkNoMedia();
-
-  //console.log(RNFS.ExternalDirectoryPath);
-
-  AsyncStorage.getItem('@DarkMode').then((value)=>{
-    if (value !== null) {
-      if (JSON.parse(value).status) {
-        setIsThemeDark(true);
-      } else {
-        setIsThemeDark(false);
-      }
-    } else {
-      setIsThemeDark(false);
-    }
-  });
-
-  return(<PreferencesContext.Provider value={preferences}>
-    <PaperProvider theme={theme}>
-      <NavigationContainer theme={theme}>
-        <StatusBar backgroundColor={(page == 0)? (isThemeDark)? '#212121': '#C33509' : '#a3015f'} barStyle={'light-content'} />
-        <Stack.Navigator initialRouteName='scmanga' screenListeners={{ state: (e: any)=>setPage(e.data.state.index)}} screenOptions={{ headerShown: false, animation: 'slide_from_bottom', gestureEnabled: false }}>
-          <Stack.Screen name='scmanga' component={HomeScreen} />
-          <Stack.Screen name='scmangahentai' component={HomeScreenHentai} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
-  </PreferencesContext.Provider>);
-};
-
-export default App;
+export { HomeScreenHentai };

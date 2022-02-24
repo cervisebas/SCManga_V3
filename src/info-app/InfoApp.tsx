@@ -8,6 +8,7 @@ import FastImage from 'react-native-fast-image';
 type IProps = {
     visible: boolean;
     close: ()=>any;
+    pageGo: (page: string)=>any;
 };
 type IState = {
     _isMount: boolean;
@@ -56,7 +57,7 @@ export class InfoApp extends Component<IProps, IState> {
                                     description="Mayoría del diseño"
                                     left={(props)=><FastImage {...props} style={{ ...imageStyle, width: 50, height: 50, overflow: 'hidden' }} source={require('../Assets/Paper-min.png')} />}
                                 />
-                                <TouchableRipple onPress={()=>console.log(true)} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+                                <TouchableRipple onPress={()=>{ this.props.pageGo('scmangahentai'); this.props.close(); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
                                     <List.Item
                                         title="React Native Navigator"
                                         description="Navegación de la aplicación"

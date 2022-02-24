@@ -50,7 +50,7 @@ export class Tab2 extends Component<IProps, IState> {
     }
     Loading() {
         return(<View style={styles.verticalAling}>
-            <ActivityIndicator animating={true} size='large' color='#ff5131' style={{ marginTop: 16 }}/>
+            <ActivityIndicator animating={true} size='large' color={CombinedDefaultTheme.colors.accent} style={{ marginTop: 16 }}/>
         </View>);
     }
     getFavorites() {
@@ -65,14 +65,13 @@ export class Tab2 extends Component<IProps, IState> {
         }).catch(()=>this.setState({ favotites: [], isLoading: false, empty: true }));
     }
     render(): React.ReactNode {
-        const { isThemeDark } = this.context;
         (this._isMounted) && this.getFavorites();
         return(<View style={{ flex: 2 }}>
-            <Appbar.Header>
+            <Appbar.Header dark={true}>
                 <Appbar.Content title={'Favoritos'}></Appbar.Content>
             </Appbar.Header>
             <SafeAreaView>
-                {(this.state.empty)? <this.nowEmpty color={(isThemeDark)? CombinedDarkTheme.colors.text : CombinedDefaultTheme.colors.text} /> : ((this.state.isLoading)? <this.Loading /> : <FlatList
+                {(this.state.empty)? <this.nowEmpty color={CombinedDarkTheme.colors.text} /> : ((this.state.isLoading)? <this.Loading /> : <FlatList
                     data={this.state.favotites}
                     style={{ marginBottom: 56 }}
                     extraData={this.state.isLoading}

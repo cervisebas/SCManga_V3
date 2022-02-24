@@ -11,6 +11,7 @@ import { InfoApp } from "../info-app/InfoApp";
 type IProps = {
     goToChapterLocal: (index: number, title: string, resolve: ()=>any)=>any;
     actionLoading: (visible: boolean, text?: string)=>any;
+    pageGo: (page: string)=>any;
 };
 type IState = {
     isSwitchOn: boolean;
@@ -82,7 +83,7 @@ export class Tab4 extends Component<IProps, IState> {
                 />
             </TouchableRipple>
             <Downloads actionLoading={(visible: boolean, text?: string)=>this.props.actionLoading(visible, text)} visible={this.state.viewDownload} goToChapterLocal={(index, title, resolve)=>this.props.goToChapterLocal(index, title, ()=>resolve())} close={()=>this.setState({ viewDownload: false })} />
-            <InfoApp visible={this.state.viewInfo} close={()=>this.setState({ viewInfo: false })} />
+            <InfoApp pageGo={(page)=>this.props.pageGo(page)} visible={this.state.viewInfo} close={()=>this.setState({ viewInfo: false })} />
         </View>);
     }
 }
