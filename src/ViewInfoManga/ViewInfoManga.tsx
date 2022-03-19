@@ -23,6 +23,7 @@ interface IProps {
     goVGenderList: (gender: string, title: string)=>any;
     flipChapters: ()=>any;
     isFlipList: boolean;
+    showMoreOptions: (actualUrl: { url: string; title: string; chapter: string; })=>any;
 };
 
 
@@ -81,7 +82,7 @@ export function ViewInfoManga3(props: IProps) {
                 ref={flatListChapters}
                 keyExtractor={(_item, index)=>index.toString()}
                 getItemLayout={(_data, index)=>({ length: 65, offset: 65 * index, index })}
-                renderItem={({item, index})=><ItemList3 data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
+                renderItem={({item, index})=><ItemList3 moreActions={(data)=>props.showMoreOptions(data)} data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
             />
             <FAB
                 icon={(props.isFlipList)? 'arrow-down-bold': 'arrow-up-thick'}

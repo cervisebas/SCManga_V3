@@ -36,10 +36,10 @@ const LoadingController: React.FC<Props> = (props: Props) => {
   const { isThemeDark } = React.useContext(PreferencesContext);
   return(<Modal visible={props.show} transparent>
     <View style={{ flex: 1, backgroundColor: props.backgroundOverlayColor, alignItems: 'center', justifyContent: 'center' }}>
-      <View style={{ padding: props.loadingPaddingView, backgroundColor: (isThemeDark)? StyleDark.components: StylesDefaults.components, borderRadius: props.borderRadius }}>
+      <View style={{ padding: props.loadingPaddingView, backgroundColor: props.backgroundColor, borderRadius: props.borderRadius }}>
         <View style={{ flexDirection: props.loaderContentDirection, alignItems: 'center' }}>
           <ActivityIndicator size={props.indicatorSize}  color={props.indicatorColor}/>
-          <Text style={{ margin: props.loadingTextMargin, fontWeight: props.fontWeight, color: (isThemeDark)? StyleDark.colorText: StylesDefaults.colorText, marginLeft: 16 }}>{props.loadingText}</Text>
+          <Text style={{ margin: props.loadingTextMargin, fontWeight: props.fontWeight, color: props.colorText, marginLeft: 16 }}>{props.loadingText}</Text>
         </View>
       </View>
     </View>

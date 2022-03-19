@@ -87,11 +87,10 @@ export class ApiManga {
     getImagesChapter(url: string): Promise<string[]> {
         return new Promise(async(resolve, reject)=>{
             fetch(url).then((response)=>response.text()).then((html)=>{
-                console.log(html);
                 try {
                     const $ = cheerio.load(html);
                     var images: string[] = [];
-                    $('div#all').find('img.img-responsive').each((_i: number, el): any=>images.push(String($(el).attr('data-src')).replace(/\ /gi, '').replace(/\n/gi, '')));
+                    $('div#all').find('img.img-responsive').each((_i: number, el): any=>images.push(String($(el).attr('data-src')).replace(/\ /gi, '').replace(/\n/gi, '').replace('http://', 'https://')));
                     if (images.length !== 0) { return resolve(images); } else { return reject(false); }
                 } catch (error) {
                     return reject(error);

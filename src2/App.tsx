@@ -168,6 +168,17 @@ const HomeScreenHentai = ({ navigation }: any)=>{
       }
     });
   };
+  const goDownload = (url: string, title: string, chapter: string)=>{
+    setLoadingView(true);
+    setLoadingText('Obteniendo información...');
+    apiManga.getImagesChapter(url).then((images)=>{
+      setLoadingView(false);
+      download.goDownload(title, url.replace('https://doujinhentai.net/manga-hentai/', ''), chapter, infoData.image, images);
+    }).catch(()=>{
+      setLoadingView(false);
+      showAlertError(4, JSON.stringify({ url, title, chapter }));
+    });
+  };
   const goOpenImageViewer = (urlImage: string)=>{
     setVImageSrc(urlImage);
     setVImageView(true);
@@ -288,6 +299,7 @@ const HomeScreenHentai = ({ navigation }: any)=>{
         actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
         goVGenderList={(gender: string, title: string)=>goVGenderList(gender, title)}
         flipChapters={()=>flipChapters()}
+        goDownload={(data)=>goDownload(data.url, data.title, data.chapter)}
       />
       <BottomNavigation
         navigationState={{ index, routes }}

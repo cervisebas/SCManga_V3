@@ -52,7 +52,7 @@ class ItemList1 extends PureComponent<IProps0, {}> {
     }
 }
 
-type IProps1 = { data: chapterInfo, title: string, action: (url: string, title: string, chapter: string)=>any };
+type IProps1 = { data: chapterInfo, title: string, action: (url: string, title: string, chapter: string)=>any, moreActions: (url: { url: string; title: string; chapter: string; })=>any };
 class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
     constructor(props: IProps1) { super(props); this.state = { _isMount: false }; }
     static contextType = PreferencesContext;
@@ -61,7 +61,7 @@ class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<View style={styles.container}>
-            {(this.state._isMount) && <TouchableRipple onPress={()=>{ this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.title}`, this.props.data.chapter); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
+            {(this.state._isMount) && <TouchableRipple onLongPress={()=>this.props.moreActions({ url: this.props.data.url, title: this.props.title, chapter: this.props.data.chapter })} onPress={()=>{ this.props.action(this.props.data.url, `Capítulo ${this.props.data.chapter} - ${this.props.title}`, this.props.data.chapter); }} style={{ justifyContent: 'center' }} rippleColor={(isThemeDark)? StyleDark.rippleColor: StylesDefaults.rippleColor}>
                 <List.Item
                     title={`Capítulo ${this.props.data.chapter}`}
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}

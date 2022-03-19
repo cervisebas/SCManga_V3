@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Portal } from "react-native-paper";
 import LoadingController from '../@assets/loading/loading-controller';
 import { Info } from "../@types/ViewInfo";
@@ -10,10 +10,11 @@ import { ViewMangas } from '../ViewInfoManga/ViewMangas';
 import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
 import { ViewGenders } from '../ViewGenders/ViewGenders';
 import { popular } from "../@types/ApiManga";
-import { MaterialDialog } from "react-native-material-dialog";
+import { MaterialDialog } from '../@assets/material-dialog';
 import { Text, ToastAndroid } from "react-native";
 import { ViewMangasLocal } from "../ViewInfoManga/ViewMangasLocal";
 import { PreferencesContext } from './PreferencesContext';
+import ActionSheet from "@alessiocancian/react-native-actionsheet";
 
 interface IProps {
     /* Information */
@@ -71,10 +72,31 @@ interface IProps {
     actionLoading: (visible: boolean, text?: string)=>any;
     goVGenderList: (gender: string, title: string)=>any;
     flipChapters: ()=>any;
+    goDownload: (data: { url: string; title: string; chapter: string; })=>any;
 };
 
 export function Global2(props: IProps) {
     const { isThemeDark } = useContext(PreferencesContext);
+    var actionSheetViewInfo: ActionSheet | null = null;
+    const [actualData, setActualData] = useState({ url: '', title: '', chapter: '' });
+    var moreOptionsComponents: any = [
+        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Ver</Text>,
+        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Descargar</Text>,
+        <Text style={{ color: CombinedDefaultTheme.colors.primary, fontWeight: 'bold' }}>Cerrar</Text>
+    ];
+    
+    const goActionSheet = (index: number)=>{
+        switch (index) {
+            case 0:
+                props.goToChapter(actualData.url, actualData.title, actualData.chapter, ()=>{return;});
+                break;
+            case 1:
+                props.goDownload(actualData);
+                break;
+        }
+        return;
+    };
+
     const retryProcess = ()=>{
         console.log(`\n ${props.errorData}`);
         switch (props.errorCode) {
@@ -116,8 +138,10 @@ export function Global2(props: IProps) {
             <LoadingController
                 show={props.loadingView}
                 loadingText={props.loadingText}
+                backgroundColor={StyleDark.components}
+                colorText={CombinedDarkTheme.colors.text}
                 borderRadius={8}
-                indicatorColor={'#f4511e'}
+                indicatorColor={CombinedDefaultTheme.colors.accent}
             />
             <ViewInfoManga3
                 visible={props.infoView}
@@ -128,6 +152,18 @@ export function Global2(props: IProps) {
                 goVGenderList={(gender: string, title: string)=>props.goVGenderList(gender, title)}
                 flipChapters={()=>props.flipChapters()}
                 isFlipList={props.infoFlipListChapter}
+                showMoreOptions={(data)=>{
+                    actionSheetViewInfo?.show();
+                    setActualData(data);
+                }}
+            />
+            <ActionSheet
+                ref={(ref)=>actionSheetViewInfo = ref}
+                title={'Más opciones'}
+                options={moreOptionsComponents}
+                userInterfaceStyle={'dark'}
+                cancelButtonIndex={2}
+                onPress={(index)=>goActionSheet(index)}
             />
             <ViewMangas
                 images={props.vMangaSources}
@@ -136,7 +172,7 @@ export function Global2(props: IProps) {
                 information={{
                     title: props.infoData.title,
                     cover: props.infoData.image,
-                    idName: props.infoData.url.replace('https://leermanga.net/manga/', ''),
+                    idName: props.infoData.url.replace('https://doujinhentai.net/manga-hentai/', ''),
                     chapter: props.vMangaChapter
                 }}
                 openImage={(img: string)=>props.goOpenImageViewer2(img)}
