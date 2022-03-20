@@ -1,6 +1,7 @@
 import RNFS, { mkdir, ExternalDirectoryPath, downloadFile, exists, writeFile, readFile, unlink } from 'react-native-fs';
 import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
 import DeviceInfo from "react-native-device-info";
+import { PermissionsAndroid } from 'react-native';
 
 type JSON_File = {
     title: string;
@@ -37,8 +38,10 @@ export class Download {
 
     async goDownload(title: string, idName: string, chapter: string, cover: string, images: string[]) {
         var idDl: string = String(Math.floor(Math.random() * (999 - 1)) + 1);
-        notifs += 1;
         await this.notification(idDl, `Descargando: ${title}`, `Capítulo ${chapter}`, 0, images.length, true, true);
+        var access = await this.checkPermisions();
+        if (!access) return await this.notificationWithOutProgress(idDl, `Ocurrio un error al descargar: ${title}`, `Capitulo ${chapter}`, false);
+        notifs += 1;
         try {
             await mkdir(`${ExternalDirectoryPath}/hentai/${idName}-${chapter}`);
             var coverDl: string = await this.download(cover, `${idName}-${chapter}/cover.jpg`);
@@ -108,6 +111,28 @@ export class Download {
         jsonExist.push(jsonString);
         if (await exists(this.jsonFile)) await unlink(this.jsonFile);
         return await writeFile(this.jsonFile, JSON.stringify(jsonExist));
+    }
+
+    async checkPermisions() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                    title: "Se requieren permisos para seguir",
+                    message: "Se requieren permisos del almacenamiento para seguir con la descarga.",
+                    buttonNeutral: "Más tarde",
+                    buttonNegative: "Cancelar",
+                    buttonPositive: "Aceptar"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            return false;
+        }
     }
 
     async notification(id: string, title: string, body: string, progress: number, maxProgress: number, indeterminate: boolean, ongoing: boolean) {

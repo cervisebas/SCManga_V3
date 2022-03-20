@@ -1,10 +1,13 @@
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS, { readFile } from 'react-native-fs';
 import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
+import { NativeModules, PermissionsAndroid } from 'react-native';
 import { Download } from './Download';
 import { Image } from 'react-native';
+import { ClearString } from './others';
 
 const download = new Download();
+const { RNImageToPdf } = NativeModules;
 
 export class GeneratePDF {
     constructor() {
@@ -20,34 +23,84 @@ export class GeneratePDF {
     async goGenerateLocal(index: number) {
         var json = await download.getJsonExist();
         var data = json[index];
-        await this.generateLocal(`${data.title} - Capítulo ${data.chapter}`, data.images_files);
+        await this.generateLocal2(`${data.title} - Capítulo ${data.chapter}`, `${ClearString(data.title.toLowerCase()).replace(/\ /gi, '-')}-${data.chapter}`, data.images_files);
     }
-
-    async generateLocal(title: string, images: string[]) {
+    
+    async generateLocal2(title: string, filename: string, images: string[]) {
         var idDl: string = String(Math.floor(Math.random() * (999 - 1)) + 1);
         try {
-            var html: string = '';
-            var width: number = 0;
-            var height: number = 0;
             await this.notification(idDl, `Conviertiendo: ${title}`, 'Espere...', 0, 1, true, true);
-            for (let i = 0; i < images.length; i++) {
-                await this.notification(idDl, `Conviertiendo: ${title}`, 'Procesando...', i, images.length, false, true);
-                await Image.getSize(`file://${images[i]}`, (ImageW, ImageH) => { height += ImageH; width = (width < ImageW)? ImageW: width; });
-                html += `<img style="width: 100%;" src="data:image/jpeg;base64,${await RNFS.readFile(images[i], 'base64')}">`;
-            }
-            await this.notification(idDl, `Conviertiendo: ${title}`, 'Generando...', 0, 1, true, true);
-            await RNHTMLtoPDF.convert({
-                html: `<div style="display: flex;width: 100%;height: auto;flex-direction: column;">${html}</div>`,
-                fileName: title,
-                directory: 'PDFS',
-                width: width,
-                height: height
-            });
-            await this.notificationWithOutProgress(idDl, `Conversión completa: ${title}`, 'Guardado en la carpeta descargas.', false);
+            var access = await this.checkPermisions();
+            if (!access) return await this.notificationWithOutProgress(idDl, `No se pudo convertir: ${title}`, 'Ocurrió un error al procesar la conversión.', false);
+            setTimeout(async()=>{
+                await this.notification(idDl, `Conviertiendo: ${title}`, 'Generando...', 0, 1, true, true);
+                this.getWidthAndHeight(images, idDl, title).then(async(values)=>{
+                    await this.notification(idDl, `Conviertiendo: ${title}`, 'Generando...', 0, 1, true, true);
+                    const options = {
+                        imagePaths: images,
+                        name: `${filename}.pdf`,
+                        maxSize: {
+                            width: values.width,
+                            height: values.height,
+                        },
+                        quality: 1,
+                        targetPathRN: RNFS.DownloadDirectoryPath
+                    };
+                    const pdf = await RNImageToPdf.createPDFbyImages(options);
+                    await RNFS.moveFile(pdf.filePath, `${RNFS.DownloadDirectoryPath}/${filename}.pdf`);
+                    await this.notificationWithOutProgress(idDl, `Conversión completa: ${title}`, 'Guardado en la carpeta descargas.', false);
+                }).catch(async(error)=>{
+                    console.log(error);
+                    await this.notificationWithOutProgress(idDl, `No se pudo convertir: ${title}`, 'Ocurrió un error al procesar la conversión.', false);
+                });
+            }, 1500);
         } catch (error) {
+            console.log(error);
             await this.notificationWithOutProgress(idDl, `No se pudo convertir: ${title}`, 'Ocurrió un error al procesar la conversión.', false);
         }
-        return true;
+    }
+
+    getWidthAndHeight(srcs: string[], idDl: string, title: string): Promise<{ width: number; height: number; }> {
+        return new Promise(async(resolve, reject)=>{
+            try {
+                var width: number = 0;
+                var height: number = 0;
+                for (let i = 0; i < srcs.length; i++) {
+                    var size = await this.getSizeImage(srcs[i]);
+                    width = (size.w > width)? size.w: width;
+                    height += size.h;
+                    await this.notification(idDl, `Conviertiendo: ${title}`, 'Procesando...', i, srcs.length, false, true);
+                }
+                resolve({ width: width, height: height });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    getSizeImage(src: string): Promise<{ w: number; h: number; }> {
+        return new Promise((resolve, reject)=>Image.getSize(`file://${src}`, (w, h)=>resolve({ w, h }), (error)=>reject(error)));
+    }
+
+    async checkPermisions() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                    title: "Se requieren permisos para seguir",
+                    message: "Se requieren permisos del almacenamiento para seguir con la conversión.",
+                    buttonNeutral: "Más tarde",
+                    buttonNegative: "Cancelar",
+                    buttonPositive: "Aceptar"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            return false;
+        }
     }
 
     async notification(id: string, title: string, body: string, progress: number, maxProgress: number, indeterminate: boolean, ongoing: boolean) {

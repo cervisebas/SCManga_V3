@@ -183,7 +183,7 @@ const HomeScreen = ({ navigation }: any)=>{
     setLoadingText('Obteniendo información...');
     apiManga.getImagesChapter(url).then((images)=>{
       setLoadingView(false);
-      download.goDownload(title, url.replace('https://leermanga.net/manga/', ''), chapter, infoData.image, images);
+      download.goDownload(title, infoData.url.replace('https://leermanga.net/manga/', ''), chapter, infoData.image, images);
     }).catch(()=>{
       setLoadingView(false);
       showAlertError(4, JSON.stringify({ url, title, chapter }));

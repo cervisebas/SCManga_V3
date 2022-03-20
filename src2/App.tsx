@@ -19,6 +19,7 @@ import DeviceInfo from "react-native-device-info";
 import { getNavigationBarHeight } from "react-native-android-navbar-height";
 import { CombinedDefaultTheme } from './Styles';
 import SplashScreen from 'react-native-splash-screen';
+import { ClearString } from './@scripts/others';
 
 const apiManga = new ApiManga();
 const viewsList = new ViewsList();
@@ -173,7 +174,7 @@ const HomeScreenHentai = ({ navigation }: any)=>{
     setLoadingText('Obteniendo información...');
     apiManga.getImagesChapter(url).then((images)=>{
       setLoadingView(false);
-      download.goDownload(title, url.replace('https://doujinhentai.net/manga-hentai/', ''), chapter, infoData.image, images);
+      download.goDownload(title, ClearString(decodeURI(infoData.url).replace('https://doujinhentai.net/manga-hentai/', '').toLowerCase()).trimStart().trimEnd().replace(/\ /gi, '-'), chapter, infoData.image, images);
     }).catch(()=>{
       setLoadingView(false);
       showAlertError(4, JSON.stringify({ url, title, chapter }));

@@ -15,6 +15,7 @@ import { Text, ToastAndroid } from "react-native";
 import { ViewMangasLocal } from "../ViewInfoManga/ViewMangasLocal";
 import { PreferencesContext } from './PreferencesContext';
 import ActionSheet from "@alessiocancian/react-native-actionsheet";
+import { ClearString } from "./others";
 
 interface IProps {
     /* Information */
@@ -172,7 +173,7 @@ export function Global2(props: IProps) {
                 information={{
                     title: props.infoData.title,
                     cover: props.infoData.image,
-                    idName: props.infoData.url.replace('https://doujinhentai.net/manga-hentai/', ''),
+                    idName: ClearString(decodeURI(props.infoData.url).replace('https://doujinhentai.net/manga-hentai/', '').toLowerCase()).trimStart().trimEnd().replace(/\ /gi, '-'),
                     chapter: props.vMangaChapter
                 }}
                 openImage={(img: string)=>props.goOpenImageViewer2(img)}

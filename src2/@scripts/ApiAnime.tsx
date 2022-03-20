@@ -90,7 +90,7 @@ export class ApiManga {
                 try {
                     const $ = cheerio.load(html);
                     var images: string[] = [];
-                    $('div#all').find('img.img-responsive').each((_i: number, el): any=>images.push(String($(el).attr('data-src')).replace(/\ /gi, '').replace(/\n/gi, '').replace('http://', 'https://')));
+                    $('div#all').find('img.img-responsive').each((_i: number, el): any=>images.push(String($(el).attr('data-src')).trimStart().trimEnd().replace(/\ /gi, '%20').replace(/\n/gi, '').replace('http://', 'https://')));
                     if (images.length !== 0) { return resolve(images); } else { return reject(false); }
                 } catch (error) {
                     return reject(error);
