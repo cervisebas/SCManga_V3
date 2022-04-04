@@ -75,10 +75,9 @@ export class Tab3 extends Component<IProps, IState> {
                     />
                 </View>
             </View>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 2 }}>
                 {(this.state.notFound)? <this.nowSearch color={(isThemeDark)? CombinedDarkTheme.colors.text : CombinedDefaultTheme.colors.text}/> : ((this.state.isLoading)? <this.Loading /> : <FlatList
                     data={this.state.searchResults}
-                    style={{ marginBottom: 116 }}
                     extraData={this.state.isLoading}
                     renderItem={({item, index})=><ItemList1 data={item} key={index} action={(url: string)=>this.props.goInfoManga(url)} />}
                 />)}
@@ -127,7 +126,8 @@ const styles = StyleSheet.create({
     },
     verticalAling: {
         width: width,
-        height: (height - 180),
+        flex: 2,
+        //height: (height - 180),
         textAlign: 'center',
         justifyContent: 'center',
         alignContent: 'center',

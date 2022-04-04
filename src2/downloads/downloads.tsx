@@ -110,7 +110,7 @@ export class Downloads extends Component<IProps, IState> {
     }
     render(): React.ReactNode {
         return(<Modal visible={this.props.visible} onShow={()=>this.loadData()} onRequestClose={()=>{ this.props.close(); this.setState({ downloads: [] }); }} animationType="slide" hardwareAccelerated={true} transparent={false}>
-            {(this.state._isMount) && <View style={{ backgroundColor: StyleDark.background }}>
+            {(this.state._isMount) && <View style={{ backgroundColor: StyleDark.background, flex: 1 }}>
                 <Appbar.Header style={{ backgroundColor: CombinedDefaultTheme.colors.card }}>
                     <Appbar.BackAction onPress={()=>this.props.close()} />
                     <Appbar.Content title={'Descargas'} titleStyle={{ color: StylesDefaults.headerText }}/>
@@ -123,7 +123,6 @@ export class Downloads extends Component<IProps, IState> {
                         <FlatList
                             data={this.state.downloads}
                             extraData={(this.props.visible)? false: true}
-                            style={{ marginBottom: 20 }}
                             renderItem={({item, index})=><List.Accordion title={item.title} key={index} theme={CombinedDefaultTheme}>
                                 <FlatList
                                     data={item.group}
@@ -155,7 +154,8 @@ export class Downloads extends Component<IProps, IState> {
 const styles = StyleSheet.create({
     content: {
         height: (height - 32),
-        width: width
+        width: width,
+        flex: 2
     },
     imageContent: {
         paddingLeft: 8,

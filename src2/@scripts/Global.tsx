@@ -81,7 +81,7 @@ export function Global2(props: IProps) {
     var actionSheetViewInfo: ActionSheet | null = null;
     const [actualData, setActualData] = useState({ url: '', title: '', chapter: '' });
     var moreOptionsComponents: any = [
-        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Ver</Text>,
+        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Ver capítulo</Text>,
         <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Descargar</Text>,
         <Text style={{ color: CombinedDefaultTheme.colors.primary, fontWeight: 'bold' }}>Cerrar</Text>
     ];

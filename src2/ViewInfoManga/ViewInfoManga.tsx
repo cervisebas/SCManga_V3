@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, View, ToastAndroid, Modal, FlatList } from "react-native";
-import { Appbar, Text, Card, TouchableRipple, Drawer, Divider, FAB, Provider as PaperProvider } from "react-native-paper";
+import { Appbar, Text, Card, TouchableRipple, Drawer, Divider, FAB, Provider as PaperProvider, Banner } from "react-native-paper";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { ItemList3 } from "../@scripts/NewComponents";
 import { Info } from "../@types/ViewInfo";
 import { ApiManga } from "../@scripts/ApiAnime";
-import { CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
+import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
 import { getNavigationBarHeight } from "react-native-android-navbar-height";
+import { PreferencesContext } from "../@scripts/PreferencesContext";
 
 const apiManga = new ApiManga();
 const { width, height } = Dimensions.get('window');
@@ -31,10 +32,7 @@ export function ViewInfoManga3(props: IProps) {
     const [index, setIndex] = useState(0);
     const [colorFavorite, setColorFavorite] = useState('#FFFFFF');
     const [favorite, setFavorite] = useState(false);
-    const [navBarHeight, setNavBarHeight] = useState(0);
-    const flatListChapters = useRef<FlatList | null>(null);
-
-    setTimeout(async()=>setNavBarHeight(await getNavigationBarHeight()));
+    const [showBanner, setShowBanner] = useState(true);
 
     /* ##### Rendes & Actions & Elements ##### */
     const renderTabBar = (props: any)=>{
@@ -73,14 +71,11 @@ export function ViewInfoManga3(props: IProps) {
     /* ##### Views ##### */
     const viewChapters = ()=>{
         const [isLoading, setIsLoading] = useState(false);
-        return(<View style={{ flex: 3 }}>
+        return(<View style={{ flex: 2 }}>
             <PaperProvider theme={CombinedDefaultTheme}>
                 <FlatList
                     data={props.data.chapters}
-                    style={{ marginBottom: 32 }}
-                    ref={flatListChapters}
-                    keyExtractor={(_item, index)=>index.toString()}
-                    getItemLayout={(_data, index)=>({ length: 65, offset: 65 * index, index })}
+                    ListHeaderComponent={()=><Banner theme={CombinedDarkTheme} visible={showBanner} actions={[{ label: 'Esconder', onPress: ()=>setShowBanner(false) }]} icon={({size})=><Image source={require('../Assets/information-dark.png')} style={{ width: size, height: size }} />}>Mantén presionado un capítulo para ver más opciones.</Banner>}
                     renderItem={({item, index})=><ItemList3 moreActions={(data)=>props.showMoreOptions(data)} data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
                 />
                 <FAB
@@ -88,7 +83,7 @@ export function ViewInfoManga3(props: IProps) {
                     style={{
                         position: 'absolute',
                         right: 16,
-                        bottom: (navBarHeight !== 0)? (56 - (navBarHeight / 2) + 8): 56,
+                        bottom: 16,
                         margin: 0,
                         backgroundColor: StylesDefaults.secondHeaderColor
                     }}
@@ -115,7 +110,7 @@ export function ViewInfoManga3(props: IProps) {
                 label={data.title}
                 onPress={()=>props.goVGenderList(processURL(data.url), data.title)} />);
         });
-        return(<ScrollView style={{ marginBottom: 32 }}>
+        return(<ScrollView style={{ flex: 2 }}>
             <Card style={{ backgroundColor: StyleDark.background }} theme={themeDefault}>
                 <Card.Title title="Información:" titleStyle={{ color: StyleDark.colorText }} />
                 <Card.Content>
@@ -171,9 +166,9 @@ export function ViewInfoManga3(props: IProps) {
 const styles = StyleSheet.create({
     content: {
         width: width,
-        //height: (height - 352),
         height: (getForPercent(height, 65) - 32),
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
+        flex: 2
     },
     image: {
         width: width,

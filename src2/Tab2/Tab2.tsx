@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Appbar, Text } from 'react-native-paper';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Appbar, Text } from 'react-native-paper';
 import { favorite } from '../@types/ApiManga';
 import { ApiManga } from '../@scripts/ApiAnime';
 import { HeartOff } from '../@Icons/Icons';
@@ -50,15 +50,13 @@ export class Tab2 extends Component<IProps, IState> {
     }
     Loading() {
         return(<View style={styles.verticalAling}>
-            <ActivityIndicator animating={true} size='large' color={CombinedDefaultTheme.colors.accent} style={{ marginTop: 16 }}/>
+            <ActivityIndicator animating={true} size={'large'} color={CombinedDefaultTheme.colors.accent}/>
         </View>);
     }
     getFavorites() {
         apiManga.getFavorites().then((favorites)=>{
             if (favorites.length !== 0) {
-                setTimeout(()=>{
-                    this.setState({ favotites: favorites, isLoading: false, empty: false });
-                }, 1500);
+                setTimeout(()=>this.setState({ favotites: favorites, isLoading: false, empty: false }), 1500);
             } else {
                 this.setState({ favotites: [], isLoading: false, empty: true });
             }
@@ -66,14 +64,13 @@ export class Tab2 extends Component<IProps, IState> {
     }
     render(): React.ReactNode {
         (this._isMounted) && this.getFavorites();
-        return(<View style={{ flex: 2 }}>
+        return(<View style={{ flex: 1 }}>
             <Appbar.Header dark={true}>
                 <Appbar.Content title={'Favoritos'}></Appbar.Content>
             </Appbar.Header>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 2 }}>
                 {(this.state.empty)? <this.nowEmpty color={CombinedDarkTheme.colors.text} /> : ((this.state.isLoading)? <this.Loading /> : <FlatList
                     data={this.state.favotites}
-                    style={{ marginBottom: 56 }}
                     extraData={this.state.isLoading}
                     renderItem={({item, index})=><ItemList4 data={item} key={index} action={(url)=>this.props.goInfoManga(url)} />}
                 />)}
@@ -85,7 +82,7 @@ export class Tab2 extends Component<IProps, IState> {
 const styles = StyleSheet.create({
     verticalAling: {
         width: width,
-        height: (height - 136),
+        flex: 2,
         textAlign: 'center',
         justifyContent: 'center',
         alignContent: 'center',

@@ -1,4 +1,3 @@
-import React from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ItemView } from "../@types/ViewsList";
 import moment from "moment";

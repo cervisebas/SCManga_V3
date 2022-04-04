@@ -58,7 +58,7 @@ export class Tab3 extends Component<IProps, IState> {
     }
 
     render(): React.ReactNode {
-        return(<View style={{ flex: 2 }}>
+        return(<View style={{ flex: 1 }}>
             <View style={{ ...styles.header, backgroundColor: CombinedDarkTheme.colors.card }}>
                 <View style={styles.headerText}>
                     <Text style={{ ...styles.headerTextContent, color: StylesDefaults.headerText }}>Directorios</Text>
@@ -72,10 +72,9 @@ export class Tab3 extends Component<IProps, IState> {
                     />
                 </View>
             </View>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 2 }}>
                 {(this.state.notFound)? <this.nowSearch color={CombinedDarkTheme.colors.text}/> : ((this.state.isLoading)? <this.Loading /> : <FlatList
                     data={this.state.searchResults}
-                    style={{ marginBottom: 116 }}
                     extraData={this.state.isLoading}
                     renderItem={({item, index})=><ItemList1 data={item} key={index} action={(url: string)=>this.props.goInfoManga(url)} />}
                 />)}
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
     },
     verticalAling: {
         width: width,
-        height: (height - 180),
+        flex: 2,
         textAlign: 'center',
         justifyContent: 'center',
         alignContent: 'center',

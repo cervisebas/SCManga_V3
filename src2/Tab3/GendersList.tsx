@@ -23,7 +23,6 @@ export class GendersList extends Component<IProps, IState> {
         };
     }
     static contextType = PreferencesContext;
-    //public genders: string[] = ['Acción', 'Adulto +18', 'Aventura', 'Comedia', 'Drama', 'Recuentos de la vida', 'Ecchi', 'Fantasia', 'Magia', 'Sobrenatural', 'Horror', 'Misterio', 'Psicológico', 'Romance', 'Ciencia Ficción', 'Thriller', 'Deporte', 'Girls Love', 'Boys Love', 'Harem', 'Mecha', 'Supervivencia', 'Reencarnación', 'Gore', 'Apocalíptico', 'Tragedia', 'Vida Escolar', 'Historia', 'Militar', 'Policiaco', 'Crimen', 'Superpoderes', 'Vampiros', 'Artes Marciales', 'Samurái', 'Género Bender', 'Realidad Virtual', 'Ciberpunk', 'Musica', 'Parodia', 'Animación', 'Demonios', 'Familia', 'Extranjero', 'Niños', 'Realidad', 'Telenovela', 'Guerra', 'Oeste'];
     public genders: string[] = ['Ecchi', 'Yaoi', 'Yuri', 'Anal', 'Tetonas', 'Escolares', 'Incesto', 'Virgenes', 'Masturbacion', 'Maduras', 'Lolicon', 'Bikini', 'Sirvientas', 'Enfermera', 'Embarazada', 'Ahegao', 'Casadas', 'Chica con Pene', 'Juguetes Sexuales', 'Orgias', 'Harem', 'Romance', 'Profesores', 'Tentaculos', 'Mamadas', 'Shota', 'Interracial', 'Full Color', 'Sin Censura', 'Futanari', 'Doble Penetracion', 'Cosplay'];
     componentDidMount() {
         this.setState({ _isMount: true });
@@ -49,16 +48,15 @@ export class GendersList extends Component<IProps, IState> {
         const { isThemeDark } = this.context;
         return(<Modal visible={this.props.visible} hardwareAccelerated={true} onRequestClose={()=>this.props.close()} animationType="slide">
             <PaperProvider theme={CombinedDefaultTheme}>
-                <View style={{ flex: 2, backgroundColor: StyleDark.background }}>
+                <View style={{ flex: 1, backgroundColor: StyleDark.background }}>
                     <Appbar.Header dark={true} style={{ backgroundColor: (isThemeDark)? StyleDark.headerColor: StylesDefaults.headerColor }}>
                         <Appbar.BackAction onPress={()=>this.props.close()} />
                         <Appbar.Content title={'Lista de generos'} titleStyle={{ color: StylesDefaults.headerText }}/>
                     </Appbar.Header>
-                    <SafeAreaView>
+                    <SafeAreaView style={{ flex: 2 }}>
                         <FlatList
                             data={this.genders}
                             horizontal={false}
-                            style={{ height: (height - 60) }}
                             renderItem={({item})=><this.itemRender 
                                 text={item}
                                 color={StyleDark.colorText}

@@ -63,7 +63,10 @@ class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
                 <List.Item
                     title={`Capítulo ${this.props.data.chapter}`}
                     style={styles.itemList3}
-                    right={()=><View style={{ height: 50, width: 50, justifyContent: 'center', alignItems: 'center' }}>{(this.props.data.view) && <Chip style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}</View>}
+                    right={(props)=><View {...props} style={{ height: 50, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                        {(this.props.data.view) && <Chip {...props} style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}
+                        <IconButton {...props} icon={'dots-vertical'} />
+                    </View>}
                     left={()=><FastImage source={require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
                 />
             </TouchableRipple>}
@@ -122,7 +125,7 @@ class ItemList5 extends PureComponent<IProps4> {
                     titleStyle={{ color: CombinedDefaultTheme.colors.text }}
                     style={styles.itemList5}
                     left={()=><FastImage source={require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
-                    right={()=><IconButton icon={'dots-vertical'} />}
+                    right={(props)=><IconButton {...props} icon={'dots-vertical'} />}
                 />
             </TouchableRipple>
             <Divider theme={{ dark: true }}/>

@@ -30,14 +30,14 @@ export class InfoApp extends Component<IProps, IState> {
         const { isThemeDark } = this.context;
         const imageStyle: { borderColor: string, borderWidth: number, borderRadius: number } = (isThemeDark)? { borderColor: '#FFFFFF', borderWidth: 2, borderRadius: 50 }: { borderColor: '#000000', borderWidth: 2, borderRadius: 50 };
         return(<Modal visible={this.props.visible} onRequestClose={()=>this.props.close()} animationType="slide" hardwareAccelerated={true} transparent={false}>
-            {(this.state._isMount) && <View style={{ flex: 2, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
+            {(this.state._isMount) && <View style={{ flex: 1, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
                 <PaperProvider theme={(isThemeDark)? CombinedDarkTheme: CombinedDefaultTheme}>
                     <Appbar.Header>
                         <Appbar.BackAction onPress={()=>this.props.close()} />
                         <Appbar.Content title="Información"/>
                     </Appbar.Header>
                     <SafeAreaView style={{ ...styles.content, position: 'relative' }}>
-                        <ScrollView>
+                        <ScrollView style={{ flex: 3 }}>
                             <View style={{ paddingLeft: 10, paddingTop: 20, marginBottom: 5 }}>
                                 <Text style={{ fontSize: 16 }}>Esta aplicación fue creada gracias a:</Text>
                             </View>
@@ -78,7 +78,7 @@ export class InfoApp extends Component<IProps, IState> {
                             <View style={{ paddingLeft: 10, paddingTop: 20, marginBottom: 5 }}>
                                 <Text style={{ fontSize: 16 }}>Otros:</Text>
                             </View>
-                            <View style={{ paddingLeft: 10, marginBottom: 34 }}>
+                            <View style={{ paddingLeft: 10 }}>
                                 <List.Item
                                     title="@alessiocancian/react-native-actionsheet"
                                     description="Hoja de acción"
@@ -151,6 +151,7 @@ export class InfoApp extends Component<IProps, IState> {
 const styles = StyleSheet.create({
     content: {
         height: (height - 32),
-        width: width
+        width: width,
+        flex: 2
     }
 });

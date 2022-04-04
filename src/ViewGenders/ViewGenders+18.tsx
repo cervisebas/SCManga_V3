@@ -54,13 +54,13 @@ export class ViewGenders18 extends Component<IProps, IState> {
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<Modal visible={this.props.visible} onRequestClose={()=>this.props.close()} animationType="slide" hardwareAccelerated={true} transparent={false} onShow={()=>this.setState({ data: this.props.list })}>
-            {(this.state._isMount) && <View style={{ flex: 2, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
+            {(this.state._isMount) && <View style={{ flex: 1, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
                 <PaperProvider theme={(isThemeDark)? CombinedDarkTheme: CombinedDefaultTheme}>
                     <Appbar.Header dark={true}>
                         <Appbar.BackAction onPress={()=>this.props.close()} />
                         <Appbar.Content title={this.props.title} titleStyle={{ color: StylesDefaults.headerText }}/>
                     </Appbar.Header>
-                    <SafeAreaView style={{ position: 'relative' }}>
+                    <SafeAreaView style={{ position: 'relative', flex: 2 }}>
                         {(this.state.isLoading) && <ProgressBar indeterminate={true} color={StylesDefaults.progressBar} style={{ position: 'absolute', top: 0, left: 0, right: 0, width: width, zIndex: 20 }} />}
                         <FlatList
                             data={this.state.data}

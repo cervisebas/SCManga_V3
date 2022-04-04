@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Appbar, Text } from 'react-native-paper';
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Appbar, Text } from 'react-native-paper';
 import { favorite } from '../@types/ApiManga';
 import { ApiManga } from '../@scripts/ApiAnime';
 import { HeartOff } from '../@Icons/Icons';
-import { CombinedDarkTheme, CombinedDefaultTheme, StylesDefaults } from '../Styles';
+import { CombinedDarkTheme, CombinedDefaultTheme } from '../Styles';
 import { ItemList4 } from '../@scripts/NewComponents';
 import { PreferencesContext } from '../@scripts/PreferencesContext';
 
@@ -50,7 +50,7 @@ export class Tab2 extends Component<IProps, IState> {
     }
     Loading() {
         return(<View style={styles.verticalAling}>
-            <ActivityIndicator animating={true} size='large' color='#ff5131' style={{ marginTop: 16 }}/>
+            <ActivityIndicator animating={true} size={'large'} color={CombinedDefaultTheme.colors.accent} />
         </View>);
     }
     getFavorites() {
@@ -71,10 +71,9 @@ export class Tab2 extends Component<IProps, IState> {
             <Appbar.Header>
                 <Appbar.Content title={'Favoritos'}></Appbar.Content>
             </Appbar.Header>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 2 }}>
                 {(this.state.empty)? <this.nowEmpty color={(isThemeDark)? CombinedDarkTheme.colors.text : CombinedDefaultTheme.colors.text} /> : ((this.state.isLoading)? <this.Loading /> : <FlatList
                     data={this.state.favotites}
-                    style={{ marginBottom: 56 }}
                     extraData={this.state.isLoading}
                     renderItem={({item, index})=><ItemList4 data={item} key={index} action={(url)=>this.props.goInfoManga(url)} />}
                 />)}
@@ -85,8 +84,8 @@ export class Tab2 extends Component<IProps, IState> {
 
 const styles = StyleSheet.create({
     verticalAling: {
+        flex: 2,
         width: width,
-        height: (height - 136),
         textAlign: 'center',
         justifyContent: 'center',
         alignContent: 'center',

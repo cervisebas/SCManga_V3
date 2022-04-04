@@ -54,13 +54,13 @@ export class ViewGenders extends Component<IProps, IState> {
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<Modal visible={this.props.visible} onRequestClose={()=>this.props.close()} animationType="slide" transparent={false} hardwareAccelerated={true} onShow={()=>this.setState({ data: this.props.list })}>
-            {(this.state._isMount) && <View style={{ flex: 2, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
+            {(this.state._isMount) && <View style={{ flex: 1, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
                 <Appbar.Header dark={true} style={{ backgroundColor: (isThemeDark)? StyleDark.headerColor: StylesDefaults.headerColor }}>
                     <Appbar.BackAction onPress={()=>this.props.close()} />
                     <Appbar.Content title={this.props.title} titleStyle={{ color: StylesDefaults.headerText }}/>
                 </Appbar.Header>
                 <PaperProvider theme={(isThemeDark)? CombinedDarkTheme: CombinedDefaultTheme}>
-                    <SafeAreaView style={{ position: 'relative' }}>
+                    <SafeAreaView style={{ position: 'relative', flex: 2 }}>
                         {(this.state.isLoading) && <ProgressBar indeterminate={true} color={(isThemeDark)? StyleDark.progressBar: StylesDefaults.progressBar} style={{ position: 'absolute', top: 0, left: 0, right: 0, width: width, zIndex: 20 }} />}
                         <FlatList
                             data={this.state.data}

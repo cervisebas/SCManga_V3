@@ -3,8 +3,7 @@ import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View } from "reac
 import { ActivityIndicator } from "react-native-paper";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { ApiManga } from "../@scripts/ApiAnime";
-import { ShowError } from "../@scripts/Components";
-import { ItemList1, ItemList2 } from "../@scripts/NewComponents";
+import { ItemList1, ItemList2, ShowError } from "../@scripts/NewComponents";
 import { CombinedDarkTheme, CombinedDefaultTheme, StylesDefaults } from "../Styles";
 import { PreferencesContext } from "../@scripts/PreferencesContext";
 

@@ -91,10 +91,8 @@ export class ApiManga {
                 try {
                     const $ = cheerio.load(html);
                     var images: string[] = [];
-                    $('div#images_chapter').find('img.img-fluid').each((i: number, el)=>{
-                        images.push(String($(el).attr('data-src')));
-                    });
-                    if (images.length !== 0) { return resolve(images); } else { return reject(false); }
+                    $('div#images_chapter').find('img.img-fluid').each((i: number, el):any=>images.push(String($(el).attr('data-src'))));
+                    if (images.length !== 0) return resolve(images); else return reject(false);
                 } catch (error) {
                     return reject(error);
                 }

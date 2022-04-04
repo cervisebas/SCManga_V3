@@ -3,7 +3,6 @@ import { Portal } from "react-native-paper";
 import LoadingController from '../@assets/loading/loading-controller';
 import { Info } from "../@types/ViewInfo";
 import { ViewInfoManga3 } from '../ViewInfoManga/ViewInfoManga';
-import { ImageView3 } from './ImageView';
 import { ImageViewManga2 } from './ImageViewManga';
 import { ImageViewMangaLocal } from './ImageViewMangaLocal';
 import { ViewMangas } from '../ViewInfoManga/ViewMangas';
@@ -16,6 +15,7 @@ import { Text, ToastAndroid } from "react-native";
 import { ViewMangasLocal } from "../ViewInfoManga/ViewMangasLocal";
 import { PreferencesContext } from './PreferencesContext';
 import ActionSheet from "@alessiocancian/react-native-actionsheet";
+import { WebToPDF } from "./WebToPDF";
 import { ApiManga } from "./ApiAnime";
 
 const apiManga = new ApiManga();
@@ -34,11 +34,6 @@ interface IProps {
     vMangaTitle: string;
     vMangaChapter: string;
     vMangaClose: ()=>any;
-
-    /* View Image */
-    vImageSrc: string;
-    vImageView: boolean;
-    vImageClose: ()=>any;
 
     /* View Images Manga */
     vImagesMangaSources: string;
@@ -68,7 +63,6 @@ interface IProps {
     /* Functions */
     goToChapter: (url: string, title: string, chapter: string, resolve: ()=>any)=>any;
     goToChapterLocal: (index: number, title: string, resolve: ()=>any)=>any;
-    goOpenImageViewer: (urlImage: string)=>any;
     goOpenImageViewer2: (urlImage: string)=>any;
     goOpenImageViewerLocal: (urlImage: string)=>any;
     goInfoManga: (url: string, resolve: ()=>any)=>any;
@@ -77,6 +71,7 @@ interface IProps {
     actionLoading: (visible: boolean, text?: string)=>any;
     goVGenderList: (gender: string, title: string)=>any;
     flipChapters: ()=>any;
+    showAlertError: (errorCode: number, errorData: string)=>any;
     goDownload: (data: { url: string; title: string; chapter: string; })=>any;
 };
 
@@ -84,11 +79,7 @@ export function Global2(props: IProps) {
     const { isThemeDark } = useContext(PreferencesContext);
     const [actualData, setActualData] = useState({ url: '', title: '', chapter: '' });
     var actionSheetViewInfo: ActionSheet | null = null;
-    var moreOptionsComponents: any = [
-        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Ver capítulo</Text>,
-        <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Descargar</Text>,
-        <Text style={{ color: CombinedDefaultTheme.colors.primary, fontWeight: 'bold' }}>Cerrar</Text>
-    ];
+    var moreOptionsComponents: any = [<Text style={{ color: CombinedDefaultTheme.colors.primary }}>Ver capítulo</Text>, <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Descargar</Text>, <Text style={{ color: CombinedDefaultTheme.colors.primary }}>Convertir a PDF</Text>, <Text style={{ color: CombinedDefaultTheme.colors.primary, fontWeight: 'bold' }}>Cerrar</Text>];
     const goActionSheet = (index: number)=>{
         switch (index) {
             case 0:
@@ -97,8 +88,21 @@ export function Global2(props: IProps) {
             case 1:
                 props.goDownload(actualData);
                 break;
+            case 2:
+                goWebToPDF();
+                break;
         }
         return;
+    };
+    const goWebToPDF = ()=>{
+        props.actionLoading(true, 'Obteniendo información...');
+        apiManga.getImagesChapter(actualData.url).then((value)=>{
+            props.actionLoading(false, '');
+            WebToPDF(actualData.title, props.infoData.url.replace('https://leermanga.net/manga/', ''), actualData.chapter, value);
+        }).catch((error)=>{
+            props.actionLoading(false, '');
+            props.showAlertError(3, '');
+        });
     };
     const retryProcess = ()=>{
         console.log(`\n ${props.errorData}`);
@@ -162,8 +166,8 @@ export function Global2(props: IProps) {
                 ref={(ref)=>actionSheetViewInfo = ref}
                 title={'Más opciones'}
                 options={moreOptionsComponents}
-                userInterfaceStyle={'dark'}
-                cancelButtonIndex={2}
+                userInterfaceStyle={(isThemeDark)? 'dark': 'light'}
+                cancelButtonIndex={moreOptionsComponents.length - 1}
                 onPress={(index)=>goActionSheet(index)}
             />
             <ViewMangas
@@ -185,11 +189,6 @@ export function Global2(props: IProps) {
                 title={props.vMangaTitle}
                 openImage={(img: string)=>props.goOpenImageViewerLocal(img)}
                 close={()=>props.vMangaClose()}
-            />
-            <ImageView3
-                image={props.vImageSrc}
-                visible={props.vImageView}
-                dissmiss={()=>props.vImageClose()}
             />
             <ImageViewManga2
                 image={props.vImagesMangaSources}

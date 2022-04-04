@@ -1,11 +1,12 @@
 import React, { PureComponent, ReactNode } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Button, Chip, Divider, IconButton, List, Text, TouchableRipple } from "react-native-paper";
 import { favorite, newMangas, popular } from "../@types/ApiManga";
 import { chapterInfo } from "../@types/ViewInfo";
-import { StyleDark, StylesDefaults } from "../Styles";
+import { CombinedDefaultTheme, StyleDark, StylesDefaults } from "../Styles";
 import { PreferencesContext } from "./PreferencesContext";
 import FastImage from 'react-native-fast-image';
+import { Alert } from "../@Icons/Icons";
 
 const styles = StyleSheet.create({
     container: {
@@ -30,6 +31,16 @@ const styles = StyleSheet.create({
         margin: 0,
         height: 65,
         flexGrow: 0
+    },
+    showErrorContent: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    showErrorContent2: {
+        flexDirection: 'column',
+        alignItems: 'center'
     }
 });
 
@@ -66,7 +77,10 @@ class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
                     title={`Capítulo ${this.props.data.chapter}`}
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
                     style={styles.itemList3}
-                    right={()=><View style={{ height: 50, width: 50, justifyContent: 'center', alignItems: 'center' }}>{(this.props.data.view) && <Chip style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}</View>}
+                    right={(props)=><View {...props} style={{ height: 50, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                        {(this.props.data.view) && <Chip {...props} style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}
+                        <IconButton {...props} icon={'dots-vertical'} />
+                    </View>}
                     left={()=><FastImage source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
                 />
             </TouchableRipple>}
@@ -127,10 +141,26 @@ class ItemList5 extends PureComponent<IProps4> {
                     titleStyle={{ color: (isThemeDark)? StyleDark.colorText : StylesDefaults.colorText }}
                     style={styles.itemList5}
                     left={()=><FastImage source={(isThemeDark)? require('../Assets/Icon1-Dark.png') : require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
-                    right={()=><IconButton icon={'dots-vertical'} />}
+                    right={(props)=><IconButton {...props} icon={'dots-vertical'} />}
                 />
             </TouchableRipple>
             <Divider theme={{ dark: isThemeDark }}/>
+        </View>);
+    }
+}
+
+type IProps5 = { retry: ()=>any; };
+class ShowError extends PureComponent<IProps5> {
+    constructor(props: IProps5) { super(props); }
+    static contextType = PreferencesContext;
+    render(): React.ReactNode {
+        const { isThemeDark } = this.context;
+        return(<View style={styles.showErrorContent}>
+            <View style={styles.showErrorContent2}>
+                <Alert width={96} height={96} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 8 }}>Lo siento, ocurrió un error.</Text>
+                <Button icon="reload" color={CombinedDefaultTheme.colors.accent} style={{ marginTop: 8 }} onPress={()=>this.props.retry()} mode="text">Reintentar</Button>
+            </View>
         </View>);
     }
 }
@@ -140,5 +170,6 @@ export {
     ItemList2,
     ItemList3,
     ItemList4,
-    ItemList5
+    ItemList5,
+    ShowError
 };

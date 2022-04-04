@@ -11,7 +11,7 @@ export class ViewsList {
                 var list = await this.getList();
                 var date: string = moment().format("DD/MM/YYYY HH:mm");
                 list.push({ url: url, date: date, views: 1 });
-                await AsyncStorage.setItem('ViewsList-Hentai', JSON.stringify(list));
+                await AsyncStorage.setItem('ViewsListHentai', JSON.stringify(list));
                 resolve(true);
             } else {
                 var list = await this.getList();
@@ -22,7 +22,7 @@ export class ViewsList {
                     date: date,
                     views: (list[index].views + 1)
                 };
-                await AsyncStorage.setItem('ViewsList-hentai', JSON.stringify(list));
+                await AsyncStorage.setItem('ViewsListHentai', JSON.stringify(list));
                 resolve(true);
             }
         });
@@ -46,7 +46,7 @@ export class ViewsList {
         });
     }
     async getList(): Promise<ItemView[]> {
-        var storage = await AsyncStorage.getItem('ViewsList-hentai');
+        var storage = await AsyncStorage.getItem('ViewsListHentai');
         return (storage !== null)? JSON.parse(String(storage)) : [];
     }
 }

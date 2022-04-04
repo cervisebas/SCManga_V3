@@ -9,13 +9,6 @@ import { NoDownload } from '../@Icons/Icons';
 import { PreferencesContext } from "../@scripts/PreferencesContext";
 import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults } from "../Styles";
 
-type JSON_File = {
-    title: string;
-    chapter: string;
-    idName: string;
-    cover_file: string;
-    images_files: string[];
-};
 type JSON_File2 = {
     id: number;
     title: string;
@@ -113,7 +106,7 @@ export class Downloads extends Component<IProps, IState> {
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<Modal visible={this.props.visible} onShow={()=>this.loadData()} onRequestClose={()=>{ this.props.close(); this.setState({ downloads: [] }); }} animationType="slide" hardwareAccelerated={true} transparent={false}>
-            {(this.state._isMount) && <View style={{ backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
+            {(this.state._isMount) && <View style={{ flex: 1, backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
                 <Appbar.Header style={{ backgroundColor: (isThemeDark)? StyleDark.headerColor: StylesDefaults.headerColor }}>
                     <Appbar.BackAction onPress={()=>this.props.close()} />
                     <Appbar.Content title={'Descargas'} titleStyle={{ color: StylesDefaults.headerText }}/>
@@ -126,7 +119,6 @@ export class Downloads extends Component<IProps, IState> {
                         <FlatList
                             data={this.state.downloads}
                             extraData={(this.props.visible)? false: true}
-                            style={{ marginBottom: 20 }}
                             renderItem={({item, index})=><List.Accordion title={item.title} key={index} theme={(isThemeDark)? CombinedDarkTheme: CombinedDefaultTheme}>
                                 <FlatList
                                     data={item.group}
@@ -158,7 +150,8 @@ export class Downloads extends Component<IProps, IState> {
 const styles = StyleSheet.create({
     content: {
         height: (height - 32),
-        width: width
+        width: width,
+        flex: 2
     },
     imageContent: {
         paddingLeft: 8,

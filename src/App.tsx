@@ -72,12 +72,6 @@ const HomeScreen = ({ navigation }: any)=>{
     setVMangaTitle('');
     setVMangaChapter('');
   };
-  const [vImageSrc, setVImageSrc] = useState('');
-  const [vImageView, setVImageView] = useState(false);
-  const vImageClose = ()=>{
-    setVImageSrc('');
-    setVImageView(false);
-  };
   const [vImagesMangaSources, setVImagesMangaSources] = useState('');
   const [vImagesMangaView, setVImagesMangaView] = useState(false);
   const [vImagesMangaViewLocal, setVImagesMangaViewLocal] = useState(false);
@@ -189,10 +183,6 @@ const HomeScreen = ({ navigation }: any)=>{
       showAlertError(4, JSON.stringify({ url, title, chapter }));
     });
   };
-  const goOpenImageViewer = (urlImage: string)=>{
-    setVImageSrc(urlImage);
-    setVImageView(true);
-  };
   const goOpenImageViewer2 = (urlImage: string)=>{
     setVImagesMangaSources(urlImage);
     setVImagesMangaView(true);
@@ -291,9 +281,6 @@ const HomeScreen = ({ navigation }: any)=>{
       vMangaTitle={vMangaTitle}
       vMangaChapter={vMangaChapter}
       vMangaClose={()=>vMangaClose()}
-      vImageSrc={vImageSrc}
-      vImageView={vImageView}
-      vImageClose={()=>vImageClose()}
       vImagesMangaSources={vImagesMangaSources}
       vImagesMangaView={vImagesMangaView}
       vImagesMangaViewLocal={vImagesMangaViewLocal}
@@ -313,7 +300,6 @@ const HomeScreen = ({ navigation }: any)=>{
       alertClose={()=>alertClose()}
       goToChapter={(url: string, title: string, chapter: string, resolve: ()=>any)=>goToChapter(url, title, chapter, ()=>resolve())}
       goToChapterLocal={(index: number, title: string, resolve: ()=>any)=>goToChapterLocal(index, title, ()=>resolve())}
-      goOpenImageViewer={(urlImage: string)=>goOpenImageViewer(urlImage)}
       goOpenImageViewer2={(urlImage: string)=>goOpenImageViewer2(urlImage)}
       goOpenImageViewerLocal={(urlImage: string)=>goOpenImageViewerLocal(urlImage)}
       goInfoManga={(url: string, resolve: ()=>any)=>goInfoManga(url, ()=>resolve())}
@@ -322,6 +308,7 @@ const HomeScreen = ({ navigation }: any)=>{
       actionLoading={(visible: boolean, text?: string)=>actionLoading(visible, text)}
       goVGenderList={(gender: string, title: string)=>goVGenderList(gender, title)}
       flipChapters={()=>flipChapters()}
+      showAlertError={(errorCode, errorData)=>showAlertError(errorCode, errorData)}
       goDownload={(data)=>goDownload(data.url, data.title, data.chapter)}
     />
     <BottomNavigation
@@ -346,24 +333,10 @@ const App = ()=>{
   const toggleTheme = React.useCallback(()=>setIsThemeDark(!isThemeDark), [isThemeDark]);
   const preferences = React.useMemo(()=>({ toggleTheme, isThemeDark}), [toggleTheme, isThemeDark]);
   SystemNavigationBar.setNavigationColor((page == 0)? (isThemeDark)? '#212121': '#C33509' : '#a3015f', true);
+  AsyncStorage.getItem('@DarkMode').then((value)=>setIsThemeDark((value !== null)? (JSON.parse(value).status)? true: false: false));
   LogBox.ignoreLogs(['new NativeEventEmitter']);
   LogBox.ignoreAllLogs();
   checkNoMedia();
-
-  //console.log(RNFS.ExternalDirectoryPath);
-
-  AsyncStorage.getItem('@DarkMode').then((value)=>{
-    if (value !== null) {
-      if (JSON.parse(value).status) {
-        setIsThemeDark(true);
-      } else {
-        setIsThemeDark(false);
-      }
-    } else {
-      setIsThemeDark(false);
-    }
-  });
-
   return(<PreferencesContext.Provider value={preferences}>
     <PaperProvider theme={theme}>
       <NavigationContainer theme={theme}>

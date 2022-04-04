@@ -43,7 +43,7 @@ export class ViewMangas extends Component<IProps, IState> {
     render(): React.ReactNode {
         const { isThemeDark } = this.context;
         return(<Modal visible={this.props.visible} onRequestClose={()=>this.props.close()} animationType="slide" hardwareAccelerated={true} transparent={false}>
-            {(this.state._isMount) && <View style={{ backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background }}>
+            {(this.state._isMount) && <View style={{ backgroundColor: (isThemeDark)? StyleDark.background: StylesDefaults.background, flex: 1 }}>
                 <Appbar.Header style={{ backgroundColor: (isThemeDark)? StyleDark.headerColor: StylesDefaults.headerColor }}>
                     <Appbar.BackAction onPress={()=>this.props.close()} />
                     <Appbar.Content title={this.props.title} titleStyle={{ color: StylesDefaults.headerText }}/>
@@ -82,7 +82,8 @@ class ImageView extends PureComponent<IPropsI, IStateI> {
 const styles = StyleSheet.create({
     content: {
         height: (height - 32),
-        width: width
+        width: width,
+        flex: 2
     },
     imageContent: {
         paddingLeft: 8,

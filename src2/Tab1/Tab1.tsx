@@ -97,7 +97,7 @@ export function Tab1(props: IProps) {
             indicatorStyle={{ backgroundColor: 'white' }}
             style={{ backgroundColor: CombinedDarkTheme.colors.card }}
             getLabelText={({route})=>route.title}
-            renderLabel={({ route, color }) => ( <Text style={{ color, margin: 8 }}> {route.title} </Text> )}
+            renderLabel={({ route, color })=><Text style={{ color, margin: 8 }}>{route.title}</Text>}
         />
     );
 

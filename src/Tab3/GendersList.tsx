@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Dimensions, FlatList, Modal, SafeAreaView, View } from "react-native";
+import { FlatList, Modal, SafeAreaView, View } from "react-native";
 import { Appbar, Divider, List, TouchableRipple } from "react-native-paper";
 import { PreferencesContext } from "../@scripts/PreferencesContext";
 import { StyleDark, StylesDefaults, themeDefault } from "../Styles";
@@ -12,8 +12,6 @@ type IProps = {
 type IState = {
     _isMount: boolean;
 };
-
-const { height } = Dimensions.get('window');
 
 export class GendersList extends Component<IProps, IState> {
     constructor(props: IProps) {
@@ -52,11 +50,10 @@ export class GendersList extends Component<IProps, IState> {
                 <Appbar.BackAction onPress={()=>this.props.close()} />
                 <Appbar.Content title={'Lista de generos'} titleStyle={{ color: StylesDefaults.headerText }}/>
             </Appbar.Header>
-            <SafeAreaView>
+            <SafeAreaView style={{ flex: 2 }}>
                 <FlatList
                     data={this.genders}
                     horizontal={false}
-                    style={{ height: (height - 60) }}
                     renderItem={({item})=><this.itemRender 
                         text={item}
                         color={(isThemeDark)? StyleDark.colorText: StylesDefaults.colorText}

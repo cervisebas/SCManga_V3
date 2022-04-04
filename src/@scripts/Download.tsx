@@ -1,4 +1,4 @@
-import RNFS, { mkdir, ExternalDirectoryPath, downloadFile, exists, writeFile, readFile, unlink } from 'react-native-fs';
+import RNFS, { mkdir, ExternalDirectoryPath, downloadFile, exists, writeFile, readFile, unlink, ExternalCachesDirectoryPath } from 'react-native-fs';
 import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
 import DeviceInfo from "react-native-device-info";
 import { PermissionsAndroid } from 'react-native';
@@ -34,6 +34,7 @@ export class Download {
     }
     private channel1: string = '';
     private showMoreInfo: boolean = true;
+    private jsonFile: string = `${ExternalDirectoryPath}/list_downloads.json`;
 
     async goDownload(title: string, idName: string, chapter: string, cover: string, images: string[]) {
         var idDl: string = String(Math.floor(Math.random() * (999 - 1)) + 1);
@@ -51,15 +52,13 @@ export class Download {
             }
             var json: JSON_File = { title: title, chapter: chapter, idName: idName, cover_file: coverDl, images_files: imagesDl };
             await this.setJsonFile(json);
-            await this.notificationWithOutProgress(idDl, `Descarga finalizada: ${title}`, `Capitulo ${chapter}`, false);
+            this.notificationWithOutProgress(idDl, `Descarga finalizada: ${title}`, `Capitulo ${chapter}`, false);
         } catch (error) {
             await this.notificationWithOutProgress(idDl, `Ocurrio un error al descargar: ${title}`, `Capitulo ${chapter}`, false);
             notifs -= 1;
             console.log(error);
         }
     }
-
-    private jsonFile: string = `${ExternalDirectoryPath}/list_downloads.json`;
 
     download(uri: string, name: string): Promise<string> {
         return new Promise(async(resolve, reject)=>{
@@ -210,5 +209,40 @@ export class Download {
         } catch (err) {
             return false;
         }
+    }
+
+
+    goDownloadTemp(idDl: string, title: string, idName: string, chapter: string, images: string[]): Promise<string[]> {
+        return new Promise(async(resolve, reject)=>{
+            await this.notification(idDl, `Descargando: ${title}`, `Capítulo ${chapter}`, 0, images.length, true, true);
+            var access = await this.checkPermisions();
+            if (!access) {
+                await this.notificationWithOutProgress(idDl, `Ocurrio un error al descargar: ${title}`, `Capitulo ${chapter}`, false);
+                return reject(false);
+            }
+            notifs += 1;
+            try {
+                await mkdir(`${ExternalCachesDirectoryPath}/${idName}-${chapter}`);
+                var imagesDl: string[] = [];
+                for (let i = 0; i < images.length; i++) {
+                    await this.notification(idDl, `Descargando: ${title}`, `Capitulo ${chapter}`, i, images.length, false, true);
+                    imagesDl.push(await this.downloadTemp(images[i], `${idName}-${chapter}/image-${i}.jpg`));
+                }
+                await this.notificationWithOutProgress(idDl, `Descarga finalizada: ${title}`, `Capitulo ${chapter}`, false);
+                return resolve(imagesDl);
+            } catch (error) {
+                await this.notificationWithOutProgress(idDl, `Ocurrio un error al descargar: ${title}`, `Capitulo ${chapter}`, false);
+                notifs -= 1;
+                console.log(error);
+                return reject(error);
+            }
+        });
+    }
+
+    downloadTemp(uri: string, name: string): Promise<string> {
+        return new Promise(async(resolve, reject)=>{
+            var options: RNFS.DownloadFileOptions = { fromUrl: uri, toFile: `${ExternalDirectoryPath}/${name}` };
+            downloadFile(options).promise.then(()=>resolve(options.toFile)).catch((reason)=>reject(reason));
+        });
     }
 }
