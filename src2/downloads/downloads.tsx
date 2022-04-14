@@ -117,7 +117,7 @@ export class Downloads extends Component<IProps, IState> {
                 </Appbar.Header>
                 <SafeAreaView style={{ ...styles.content, position: 'relative' }}>
                     <Banner visible={(this.state.isLoading)? false: (this.state.empty)? false: this.state.showBanner} actions={[{ label: 'Esconder', onPress: ()=>this.setState({ showBanner: false }) }]} icon={({size})=><Image source={require('../Assets/information-dark.png')} style={{ width: size, height: size }} />} >
-                        Mantén presionado un capítulo para ver más opciones.
+                        Mantén presionado un capítulo para ver más opciones o toca el botón de menú.
                     </Banner>
                     {(this.state.empty)? <this.nowEmpty color={CombinedDefaultTheme.colors.text} /> : ((this.state.isLoading)? <this.Loading /> : <List.Section theme={CombinedDefaultTheme}>
                         <FlatList

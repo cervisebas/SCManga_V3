@@ -6,6 +6,7 @@ import { chapterInfo } from "../@types/ViewInfo";
 import { CombinedDefaultTheme, StyleDark, StylesDefaults } from "../Styles";
 import { PreferencesContext } from "./PreferencesContext";
 import FastImage from 'react-native-fast-image';
+import { Alert } from "../@Icons/Icons";
 
 const styles = StyleSheet.create({
     container: {
@@ -30,6 +31,16 @@ const styles = StyleSheet.create({
         margin: 0,
         height: 65,
         flexGrow: 0
+    },
+    showErrorContent: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    showErrorContent2: {
+        flexDirection: 'column',
+        alignItems: 'center'
     }
 });
 
@@ -65,7 +76,7 @@ class ItemList3 extends PureComponent<IProps1, { _isMount: boolean; }> {
                     style={styles.itemList3}
                     right={(props)=><View {...props} style={{ height: 50, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                         {(this.props.data.view) && <Chip {...props} style={{ height: 32 }} mode="outlined" icon={'eye'}>{this.props.data.viewInfo.views}</Chip>}
-                        <IconButton {...props} icon={'dots-vertical'} />
+                        <IconButton {...props} icon={'dots-vertical'} onPress={()=>this.props.moreActions({ url: this.props.data.url, title: this.props.title, chapter: this.props.data.chapter })} />
                     </View>}
                     left={()=><FastImage source={require('../Assets/Icon1.png')} style={{ width: 50, height: 50 }} /> }
                 />
@@ -133,10 +144,27 @@ class ItemList5 extends PureComponent<IProps4> {
     }
 }
 
+type IProps5 = { retry: ()=>any; };
+class ShowError extends PureComponent<IProps5> {
+    constructor(props: IProps5) { super(props); }
+    static contextType = PreferencesContext;
+    render(): React.ReactNode {
+        const { isThemeDark } = this.context;
+        return(<View style={styles.showErrorContent}>
+            <View style={styles.showErrorContent2}>
+                <Alert width={96} height={96} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 8 }}>Lo siento, ocurrió un error.</Text>
+                <Button icon="reload" color={CombinedDefaultTheme.colors.accent} style={{ marginTop: 8 }} onPress={()=>this.props.retry()} mode="text">Reintentar</Button>
+            </View>
+        </View>);
+    }
+}
+
 export {
     ItemList1,
     ItemList2,
     ItemList3,
     ItemList4,
-    ItemList5
+    ItemList5,
+    ShowError
 };

@@ -4,7 +4,7 @@ import { ActivityIndicator, Appbar, Text } from 'react-native-paper';
 import { favorite } from '../@types/ApiManga';
 import { ApiManga } from '../@scripts/ApiAnime';
 import { HeartOff } from '../@Icons/Icons';
-import { CombinedDarkTheme, CombinedDefaultTheme, StylesDefaults } from '../Styles';
+import { CombinedDarkTheme, CombinedDefaultTheme } from '../Styles';
 import { ItemList4 } from '../@scripts/NewComponents';
 import { PreferencesContext } from '../@scripts/PreferencesContext';
 

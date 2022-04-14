@@ -3,7 +3,6 @@ import { Portal } from "react-native-paper";
 import LoadingController from '../@assets/loading/loading-controller';
 import { Info } from "../@types/ViewInfo";
 import { ViewInfoManga3 } from '../ViewInfoManga/ViewInfoManga';
-import { ImageView3 } from './ImageView';
 import { ImageViewManga2 } from './ImageViewManga';
 import { ImageViewMangaLocal } from './ImageViewMangaLocal';
 import { ViewMangas } from '../ViewInfoManga/ViewMangas';
@@ -185,11 +184,6 @@ export function Global2(props: IProps) {
                 title={props.vMangaTitle}
                 openImage={(img: string)=>props.goOpenImageViewerLocal(img)}
                 close={()=>props.vMangaClose()}
-            />
-            <ImageView3
-                image={props.vImageSrc}
-                visible={props.vImageView}
-                dissmiss={()=>props.vImageClose()}
             />
             <ImageViewManga2
                 image={props.vImagesMangaSources}

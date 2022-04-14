@@ -74,7 +74,7 @@ export function ViewInfoManga3(props: IProps) {
         return(<View style={{ flex: 2 }}>
             <FlatList
                 data={props.data.chapters}
-                ListHeaderComponent={()=><Banner visible={showBanner} actions={[{ label: 'Esconder', onPress: ()=>setShowBanner(false) }]} icon={({size})=><Image source={(isThemeDark)? require('../Assets/information-dark.png'): require('../Assets/information.png')} style={{ width: size, height: size }} />}>Mantén presionado un capítulo para ver más opciones.</Banner>}
+                ListHeaderComponent={()=><Banner visible={showBanner} actions={[{ label: 'Esconder', onPress: ()=>setShowBanner(false) }]} icon={({size})=><Image source={(isThemeDark)? require('../Assets/information-dark.png'): require('../Assets/information.png')} style={{ width: size, height: size }} />}>Mantén presionado un capítulo para ver más opciones o toca el botón de menú.</Banner>}
                 renderItem={({item, index})=><ItemList3 moreActions={(data)=>props.showMoreOptions(data)} data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
             />
             <FAB

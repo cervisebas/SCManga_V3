@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View,ToastAndroid } from "react-native";
+import { View } from "react-native";
 import { Appbar, List, TouchableRipple } from "react-native-paper";
 import { StyleDark } from '../Styles';
 import { Downloads } from "../downloads/downloads";

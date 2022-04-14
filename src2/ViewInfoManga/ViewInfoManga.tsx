@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, View, ToastAndroid, Modal, FlatList } from "react-native";
 import { Appbar, Text, Card, TouchableRipple, Drawer, Divider, FAB, Provider as PaperProvider, Banner } from "react-native-paper";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
@@ -6,8 +6,6 @@ import { ItemList3 } from "../@scripts/NewComponents";
 import { Info } from "../@types/ViewInfo";
 import { ApiManga } from "../@scripts/ApiAnime";
 import { CombinedDarkTheme, CombinedDefaultTheme, StyleDark, StylesDefaults, themeDefault } from "../Styles";
-import { getNavigationBarHeight } from "react-native-android-navbar-height";
-import { PreferencesContext } from "../@scripts/PreferencesContext";
 
 const apiManga = new ApiManga();
 const { width, height } = Dimensions.get('window');
@@ -75,7 +73,7 @@ export function ViewInfoManga3(props: IProps) {
             <PaperProvider theme={CombinedDefaultTheme}>
                 <FlatList
                     data={props.data.chapters}
-                    ListHeaderComponent={()=><Banner theme={CombinedDarkTheme} visible={showBanner} actions={[{ label: 'Esconder', onPress: ()=>setShowBanner(false) }]} icon={({size})=><Image source={require('../Assets/information-dark.png')} style={{ width: size, height: size }} />}>Mantén presionado un capítulo para ver más opciones.</Banner>}
+                    ListHeaderComponent={()=><Banner theme={CombinedDarkTheme} visible={showBanner} actions={[{ label: 'Esconder', onPress: ()=>setShowBanner(false) }]} icon={({size})=><Image source={require('../Assets/information-dark.png')} style={{ width: size, height: size }} />}>Mantén presionado un capítulo para ver más opciones o toca el botón de menú.</Banner>}
                     renderItem={({item, index})=><ItemList3 moreActions={(data)=>props.showMoreOptions(data)} data={item} key={index.toString()} title={props.data.title} action={(url: string, title: string, chapter: string)=>props.clickGoToChapter(url, title, chapter)} />}
                 />
                 <FAB

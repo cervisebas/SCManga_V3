@@ -1,4 +1,3 @@
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS, { readFile } from 'react-native-fs';
 import notifee, { AndroidGroupAlertBehavior } from '@notifee/react-native';
 import { NativeModules, PermissionsAndroid } from 'react-native';
