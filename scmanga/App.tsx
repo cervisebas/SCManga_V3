@@ -1,33 +1,18 @@
-import { StatusBar, View } from 'react-native';
-
-import { BottomNavigation } from 'react-native-paper';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import SystemNavigationBar from "react-native-system-navigation-bar";
-import SplashScreen from 'react-native-splash-screen';
 import React, { useState } from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import { StatusBar, View } from 'react-native';
+import { BottomNavigation } from 'react-native-paper';
+import SplashScreen from 'react-native-splash-screen';
 import { Tab1 } from './Tab1/Tab1';
 import { Tab2 } from './Tab2/Tab2';
 import { Tab3 } from './Tab3/Tab3-2';
 import { Tab4 } from './Tab4/Tab4';
-
 import { Global2 } from './@scripts/Global';
-import { CombinedDarkTheme, CombinedDefaultTheme } from './Styles';
 import { ApiManga } from './@scripts/ApiAnime';
 import { chapterInfo } from './@types/ViewInfo';
 import { ViewsList } from './@scripts/ViewsList';
-import { PreferencesContext } from './@scripts/PreferencesContext';
 import { Download } from './@scripts/Download';
-
-import RNFS from 'react-native-fs';
-import { LogBox } from 'react-native';
 import DeviceInfo from "react-native-device-info";
 import { getNavigationBarHeight } from "react-native-android-navbar-height";
-import { HomeScreenHentai } from '../src2/App';
 
 const apiManga = new ApiManga();
 const viewsList = new ViewsList();
@@ -47,7 +32,7 @@ const HomeScreen = ({ navigation }: any)=>{
   const navGo = (page: string)=>{
     SplashScreen.show();
     setTimeout(()=>navigation.navigate(page), 128);
-    setTimeout(()=>SplashScreen.hide(), 2048);
+    setTimeout(()=>SplashScreen.hide(), 1536);
   };
 
   /* ##### Global ##### */
@@ -319,35 +304,4 @@ const HomeScreen = ({ navigation }: any)=>{
   </View>);
 };
 
-const checkNoMedia = async()=>{
-  var exist = await RNFS.exists(`${RNFS.ExternalDirectoryPath}/.nomedia`);
-  if (!exist) await RNFS.writeFile(`${RNFS.ExternalDirectoryPath}/.nomedia`, '');
-};
-
-const App = ()=>{
-  setTimeout(()=>SplashScreen.hide(), 1500);
-  const Stack = createNativeStackNavigator();
-  const [isThemeDark, setIsThemeDark] = React.useState(false);
-  const [page, setPage] = React.useState(0);
-  var theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
-  const toggleTheme = React.useCallback(()=>setIsThemeDark(!isThemeDark), [isThemeDark]);
-  const preferences = React.useMemo(()=>({ toggleTheme, isThemeDark}), [toggleTheme, isThemeDark]);
-  SystemNavigationBar.setNavigationColor((page == 0)? (isThemeDark)? '#212121': '#C33509' : '#a3015f', true);
-  AsyncStorage.getItem('@DarkMode').then((value)=>setIsThemeDark((value !== null)? (JSON.parse(value).status)? true: false: false));
-  LogBox.ignoreLogs(['new NativeEventEmitter']);
-  LogBox.ignoreAllLogs();
-  checkNoMedia();
-  return(<PreferencesContext.Provider value={preferences}>
-    <PaperProvider theme={theme}>
-      <NavigationContainer theme={theme}>
-        <StatusBar backgroundColor={(page == 0)? (isThemeDark)? '#212121': '#C33509' : '#a3015f'} barStyle={'light-content'} />
-        <Stack.Navigator initialRouteName='scmanga' screenListeners={{ state: (e: any)=>setPage(e.data.state.index)}} screenOptions={{ headerShown: false, animation: 'slide_from_bottom', gestureEnabled: false }}>
-          <Stack.Screen name='scmanga' component={HomeScreen} />
-          <Stack.Screen name='scmangahentai' component={HomeScreenHentai} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
-  </PreferencesContext.Provider>);
-};
-
-export default App;
+export default HomeScreen;

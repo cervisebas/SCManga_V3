@@ -40,7 +40,7 @@ const HomeScreenHentai = ({ navigation }: any)=>{
   const navGo = (page: string)=>{
     SplashScreen.show();
     setTimeout(()=>navigation.navigate(page), 128);
-    setTimeout(()=>SplashScreen.hide(), 2048);
+    setTimeout(()=>SplashScreen.hide(), 1536);
   };
 
   /* ##### Global ##### */
@@ -311,4 +311,4 @@ const HomeScreenHentai = ({ navigation }: any)=>{
   </PaperProvider>);
 };
 
-export { HomeScreenHentai };
+export default HomeScreenHentai;

@@ -1,5 +1,3 @@
-import React from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';0
 import { DefaultTheme } from 'react-native-paper';
 import { DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
 import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
