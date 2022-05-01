@@ -56,7 +56,7 @@ export class Tab3 extends Component<IProps, IState> {
             return this.setState({ searchResults: results, notFound: false, isLoading: false });
         }).catch(()=>{
             return this.setState({ isLoading: false, notFound: true });
-        })
+        });
     }
 
     render(): React.ReactNode {
